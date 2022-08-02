@@ -1,0 +1,49 @@
+.emptyCell {
+    border: 2px solid lightgrey;
+}
+
+.activeCell {
+    border: 2px solid gray;
+/* TODO:   add transition*/
+}
+
+.baseCell {
+    width: 60px;
+    height: 60px;
+    margin: 2px;
+
+    font-weight: bold;
+    font-size: 28px;
+    line-height: 60px;
+
+    text-align: center;
+}
+
+.cellRow {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.letterDisplay {
+    margin: auto;
+    vertical-align: center;
+    width: 350px;
+    height: 420px;
+}
+
+.incorrectLetterCell {
+    border: 2px solid var(--colour-incorrect);
+    background: var(--colour-incorrect);
+}
+
+.closeLetterCell {
+    border: 2px solid var(--colour-close);
+    background: var(--colour-close);
+}
+
+.correctLetterCell {
+    border: 2px solid var(--colour-correct);
+    background: var(--colour-correct);
+}

@@ -1,0 +1,47 @@
+.startingLetter {
+    background: var(--colour-base);
+}
+
+.incorrectLetter {
+    background: var(--colour-incorrect);
+}
+
+.closeLetter {
+    background: var(--colour-close);
+}
+
+.correctLetter {
+    background: var(--colour-correct);
+}
+
+.baseLetter {
+    width: 44px;
+    height: 64px;
+    margin: 4px;
+
+    border-radius: 6px;
+
+    text-align: center;
+    vertical-align: center;
+    line-height: 60px;
+    font-weight: bold;
+
+    user-select: none;
+}
+
+.specialKey {
+    width: 64px;
+    background: var(--colour-base);
+}
+
+.backSpace {
+    font-size: 30px;
+    line-height: 65px;
+}
+
+.cellRow {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}

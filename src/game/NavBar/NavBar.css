@@ -1,0 +1,26 @@
+.nav-bar {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 10px 10px;
+    font-size: 28px;
+
+    border-bottom: lightgrey 1px solid;
+}
+
+.nav-icon {
+    padding: 0px 5px;
+    cursor: pointer;
+}
+
+.icon-padding {
+    padding-left: 38px;
+}
+
+.title {
+    font-size: 34px;
+    font-family: fantasy;
+    text-align: center;
+}

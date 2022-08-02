@@ -1,0 +1,28 @@
+:root {
+    --colour-correct: #33ea33;
+    --colour-close: #eedd20;
+    --colour-incorrect: #7e7d7d;
+    --colour-base: lightgrey;
+}
+
+/* Enabled filling the whole height of the page. */
+html, body, #root {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.gameContainer {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-container {
+    position: absolute;
+    top: 56px;
+    left: 50%;
+    transform: translate(-50%);
+}
