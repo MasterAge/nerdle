@@ -8,7 +8,7 @@ Play nerdle now at:
 
 ## Self-hosted
 Requirements:
-    * Node v16
+* Node v16
 ```bash
     git clone git@github.com:MasterAge/nerdle.git
     cd nerdle
