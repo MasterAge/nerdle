@@ -7,7 +7,7 @@ interface LetterCellProps {
     className?: string,
 }
 
-function LetterCell(props: LetterCellProps) {
+export function LetterCell(props: LetterCellProps) {
     let extraClass = "";
 
     if (props.className === undefined) {
@@ -20,7 +20,7 @@ function LetterCell(props: LetterCellProps) {
     return <div className={className}>{props.letter}</div>
 }
 
-const stateClasses: Map<LetterStates, string> = new Map([
+export const stateClasses: Map<LetterStates, string> = new Map([
     [LetterStates.INCORRECT, "incorrectLetterCell"],
     [LetterStates.CLOSE, "closeLetterCell"],
     [LetterStates.CORRECT, "correctLetterCell"],

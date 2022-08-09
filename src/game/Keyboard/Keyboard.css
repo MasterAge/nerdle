@@ -38,10 +38,3 @@
     font-size: 30px;
     line-height: 65px;
 }
-
-.cellRow {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-}

@@ -1,0 +1,15 @@
+.modalTitle {
+    margin-right: -108px;
+    width: 100%;
+    text-align: center;
+}
+
+div.modalHeader {
+    padding: 5px;
+    border-bottom: none;
+    font-size: 20px;
+}
+
+.modalContainer {
+    background: #ffffff00;
+}

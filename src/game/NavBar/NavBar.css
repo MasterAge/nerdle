@@ -13,6 +13,8 @@
 .nav-icon {
     padding: 0px 5px;
     cursor: pointer;
+    box-sizing: initial;
+    vertical-align: initial;
 }
 
 .icon-padding {

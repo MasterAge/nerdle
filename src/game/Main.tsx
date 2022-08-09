@@ -1,10 +1,12 @@
-import React, {ReactNode} from "react";
+import React from "react";
 import {NavBar} from "./NavBar/NavBar";
 import {LetterDisplay} from "./LetterDisplay/LetterDisplay";
 import './Main.css';
 import {Keyboard} from "./Keyboard/Keyboard";
-import {KeyState, LetterState, LetterStates} from "./Models";
+import {KeyState, LetterState, LetterStates, loadStats, PlayerStats, saveStats, MAX_ATTEMPTS} from "./Models";
 import {Popup} from "./Popup/Popup";
+import {HelpModal} from "./Modal/HelpModal";
+import {StatsModal} from "./Modal/StatsModal";
 
 function objectArray<Type>(numElements: number, elementFactory: () => Type): Array<Type> {
     return new Array(numElements).fill(null).map(elementFactory);
@@ -13,11 +15,13 @@ function objectArray<Type>(numElements: number, elementFactory: () => Type): Arr
 interface MainState {
     guesses: Array<Array<LetterState>>;
     keyboard: Map<string, KeyState>;
-    popupList: Array<string>
+    popupList: Array<string>;
+    statsModal: boolean;
+    helpModal: boolean;
+    settingsModal: boolean;
 }
 
 export class Main extends React.Component<{}, MainState> {
-    MAX_ATTEMPTS: number = 6;
     LOWERCASE_ALPHABET: string = "abcdefghijklmnopqrstuvwxyz";
     KEYBOARD_LAYOUT: Array<Array<string>> = [
         ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -31,6 +35,8 @@ export class Main extends React.Component<{}, MainState> {
     lettersEntered: number;
     word: string;
 
+    playerStats: PlayerStats;
+
     constructor(props: Readonly<{}>) {
         super(props);
         this.attempt = 0;
@@ -38,28 +44,19 @@ export class Main extends React.Component<{}, MainState> {
         this.word = "";
         this.wordList = [];
 
+        this.playerStats = loadStats();
+
         fetch("5letter_upper.txt").then(response => {
             response.text().then(content => {
                 this.wordList = content.split("\n");
                 this.pickWord();
             })
         });
-
-        // const guesses: Array<Array<LetterState>> = objectArray(this.MAX_ATTEMPTS,
-        //     () => objectArray(5, () => new LetterState("")));
-        //
-        // const keyboard = new Map(this.KEYBOARD_LAYOUT.flat().map(key => [key, new KeyState(key, this.guessFactory(key))]));
-        //
-        // this.state = {
-        //     guesses: guesses,
-        //     keyboard: keyboard,
-        //     popupList: []
-        // };
         this.state = this.reset();
     }
 
     reset = (setState: boolean = false): MainState => {
-        const guesses: Array<Array<LetterState>> = objectArray(this.MAX_ATTEMPTS,
+        const guesses: Array<Array<LetterState>> = objectArray(MAX_ATTEMPTS,
             () => objectArray(5, () => new LetterState("")));
 
         const keyboard = new Map(this.KEYBOARD_LAYOUT.flat().map(key => [key, new KeyState(key, this.guessFactory(key))]));
@@ -67,7 +64,10 @@ export class Main extends React.Component<{}, MainState> {
         const state = {
             guesses: guesses,
             keyboard: keyboard,
-            popupList: []
+            popupList: [],
+            helpModal: false,
+            settingsModal: false,
+            statsModal: false,
         };
 
         if (setState) {
@@ -117,13 +117,24 @@ export class Main extends React.Component<{}, MainState> {
                 }
             });
 
-            if (guessedWord == this.word) {
-                this.addPopup(this.SUCCESS_MESSAGE[this.attempt])
-            } else {
+            if (this.word != guessedWord && this.attempt + 1 < MAX_ATTEMPTS) {
+                // Guesses remaining.
                 this.setState({keyboard: keyboardState, guesses: guesses})
                 this.lettersEntered = 0;
                 this.attempt++;
+                return;
             }
+
+            // Game over, they won or lost.
+            const won = (guessedWord == this.word);
+            const popupMessage = (won) ? this.SUCCESS_MESSAGE[this.attempt] : this.word;
+
+            this.addPopup(popupMessage);
+            this.playerStats.addGame(this.attempt + 1, won);
+            setTimeout(() => this.setState({statsModal: true}), 1000);
+
+            saveStats(this.playerStats);
+
         } else if (!this.wordList.includes(guessedWord)) {
             this.addPopup("Not in word list")
         } else if (this.lettersEntered > 0) {
@@ -147,7 +158,7 @@ export class Main extends React.Component<{}, MainState> {
     }
 
     guess = (letter: string) => {
-        if (this.lettersEntered < 5 && this.attempt < this.MAX_ATTEMPTS) {
+        if (this.lettersEntered < 5 && this.attempt < MAX_ATTEMPTS) {
             const guessState = this.state.guesses;
             guessState[this.attempt][this.lettersEntered].name = letter;
             this.setState({
@@ -194,7 +205,12 @@ export class Main extends React.Component<{}, MainState> {
     render() {
         return (
             <div className="gameContainer">
-                <NavBar newGame={this.reset}/>
+                <NavBar
+                    newGame={() => this.reset(true)}
+                    help={() => this.setState({helpModal: true})}
+                    stats={() => this.setState({statsModal: true})}
+                    settings={() => this.setState({settingsModal: true})}
+                />
                 <LetterDisplay cells={this.state.guesses}/>
                 <Keyboard
                     keystate={this.state.keyboard}
@@ -204,14 +220,19 @@ export class Main extends React.Component<{}, MainState> {
                 />
                 <div className="popup-container">
                     {this.state.popupList.map((message, index) =>
-                        <Popup removeMe={this.removePopup}
-                               duration_ms={3000}
-                               index={index}
-                               key={index}
-                        >
+                        <Popup removeMe={this.removePopup} duration_ms={3000} index={index} key={index}>
                             {message}
                         </Popup>)}
                 </div>
+                <HelpModal
+                    title={"How to play"}
+                    show={this.state.helpModal}
+                    closeModal={() => this.setState({helpModal: false})}/>
+                <StatsModal
+                    title={"STATISTICS"}
+                    show={this.state.statsModal}
+                    closeModal={() => this.setState({statsModal: false})}
+                    stats={this.playerStats}/>
             </div>
         );
     }

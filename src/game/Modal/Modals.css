@@ -1,0 +1,53 @@
+/* Help Modal */
+.modalCellRow {
+    justify-content: left;
+    align-items: flex-start;
+}
+
+/* StatDisplay */
+.statValue {
+    font-size: 36px;
+    text-align: center;
+}
+
+.statName {
+    margin-top: -10px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.statsRow {
+    margin-top: -30px;
+}
+
+.statCell {
+    margin: 0 10px;
+    width: 60px;
+    height: 92px;
+}
+
+.statsModalTitle {
+    padding-bottom: 5px;
+}
+
+/* Guess Distribution */
+.graphContainer {
+    display: grid;
+    grid-template-columns: 8px auto;
+    column-gap: 5px;
+    padding: 2px 40px;
+    line-height: 20px;
+    font-weight: 500;
+}
+
+.graphBar {
+    background: grey;
+    color: white;
+    min-width: 30px;
+    height:20px;
+}
+
+.graphBarLabel {
+    text-align: right;
+    padding: 0px 10px;
+}
