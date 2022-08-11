@@ -1,12 +1,8 @@
 import React, {ReactNode} from "react";
 import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
+import {DialogTitle} from "@mui/material";
 import {PlayerStats} from "../Models";
 import "./Modals.css";
-import Modal from "react-bootstrap/Modal";
-
-interface StatsModalProps extends CommonModalProps {
-    stats: PlayerStats;
-}
 
 interface StatDisplayProps {
     value: number;
@@ -48,18 +44,21 @@ function GuessDistribution(props: GuessDistributionProps) {
     return <div>{rows}</div>;
 }
 
+interface StatsModalProps extends CommonModalProps {
+    stats: PlayerStats;
+}
+
 export function StatsModal(props: StatsModalProps) {
     return (
         <CommonModal title={props.title} show={props.show} closeModal={props.closeModal}>
-            <div className="cellRow statsRow">
+            <div className="cellRow">
                 <StatDisplay value={props.stats.played} name="Played"/>
                 <StatDisplay value={props.stats.getWinPercent()} name="Win %"/>
                 <StatDisplay value={props.stats.currentStreak} name="Current Streak"/>
                 <StatDisplay value={props.stats.maxStreak} name="Max Streak"/>
             </div>
-            <br/>
             <div>
-                <Modal.Title className="modalTitle">GUESS DISTRIBUTION</Modal.Title>
+                <DialogTitle className="modalTitle">GUESS DISTRIBUTION</DialogTitle>
                 <GuessDistribution winDistribution={props.stats.winDistribution}/>
             </div>
         </CommonModal>

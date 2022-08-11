@@ -1,6 +1,7 @@
 import React from "react";
 import './NavBar.css';
-import { BsList, BsQuestionCircle, BsFileBarGraph, BsGearFill, BsArrowCounterclockwise } from "react-icons/bs";
+
+import { HelpOutline, PlayCircleFilledWhiteOutlined, Settings, LeaderboardOutlined } from '@mui/icons-material';
 
 interface NavProps {
     newGame: () => void,
@@ -15,17 +16,15 @@ export class NavBar extends React.Component<NavProps> {
         return (
             <div className="nav-bar">
                 <div>
-                    {/*<BsList className="nav-icon"/>*/}
-                    <BsQuestionCircle className="nav-icon" onClick={this.props.help}/>
-                    <BsArrowCounterclockwise className="nav-icon" onClick={this.props.newGame}/>
+                    <HelpOutline className="nav-icon" onClick={this.props.help} fontSize={"large"}/>
+                    <PlayCircleFilledWhiteOutlined className="nav-icon" onClick={this.props.newGame} fontSize={"large"}/>
                 </div>
                 <div className="title">
                     Nerdle
                 </div>
                 <div>
-                    {/*<span className="icon-padding"/>*/}
-                    <BsFileBarGraph className="nav-icon" onClick={this.props.stats}/>
-                    <BsGearFill className="nav-icon" onClick={this.props.settings}/>
+                    <LeaderboardOutlined className="nav-icon" onClick={this.props.stats} fontSize={"large"}/>
+                    <Settings className="nav-icon" onClick={this.props.settings} fontSize={"large"}/>
                 </div>
             </div>
         );

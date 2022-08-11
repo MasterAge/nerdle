@@ -1,4 +1,3 @@
-
 options
 dark mode
 grid instead of flexbox for letter display
@@ -9,3 +8,4 @@ Done:
 Help
 modal heading text alignment
 stats
+replace bootstrap with material ui https://mui.com/material-ui/

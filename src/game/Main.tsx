@@ -7,6 +7,7 @@ import {KeyState, LetterState, LetterStates, loadStats, PlayerStats, saveStats, 
 import {Popup} from "./Popup/Popup";
 import {HelpModal} from "./Modal/HelpModal";
 import {StatsModal} from "./Modal/StatsModal";
+import {SettingsModal} from "./Modal/SettingsModal";
 
 function objectArray<Type>(numElements: number, elementFactory: () => Type): Array<Type> {
     return new Array(numElements).fill(null).map(elementFactory);
@@ -19,6 +20,9 @@ interface MainState {
     statsModal: boolean;
     helpModal: boolean;
     settingsModal: boolean;
+    hardMode: boolean;
+    darkMode: boolean;
+    highContrastMode: boolean;
 }
 
 export class Main extends React.Component<{}, MainState> {
@@ -53,6 +57,7 @@ export class Main extends React.Component<{}, MainState> {
             })
         });
         this.state = this.reset();
+        console.log(typeof this.state.guesses)
     }
 
     reset = (setState: boolean = false): MainState => {
@@ -68,6 +73,9 @@ export class Main extends React.Component<{}, MainState> {
             helpModal: false,
             settingsModal: false,
             statsModal: false,
+            hardMode: false,
+            darkMode: false,
+            highContrastMode: false,
         };
 
         if (setState) {
@@ -196,10 +204,15 @@ export class Main extends React.Component<{}, MainState> {
 
     removePopup = (index: number) => {
         const popupList = this.state.popupList;
-        // If the index is too big, remove the first popup (likely the oldest).
+        // If the index is too big, remove the last popup.
         const toRemove = Math.min(popupList.length - 1, index);
-        popupList.splice(toRemove, 1)
+        popupList.splice(toRemove, 1);
         this.setState({popupList: popupList})
+    }
+
+    switchChangeFactory = (key: keyof MainState) => {
+        return (event: React.ChangeEvent<HTMLInputElement>) =>
+                this.setState({[key]: event.target.checked} as unknown as Pick<MainState, keyof MainState>)
     }
 
     render() {
@@ -233,6 +246,17 @@ export class Main extends React.Component<{}, MainState> {
                     show={this.state.statsModal}
                     closeModal={() => this.setState({statsModal: false})}
                     stats={this.playerStats}/>
+                <SettingsModal
+                    title="SETTINGS"
+                    show={this.state.settingsModal}
+                    hardModeState={this.state.hardMode}
+                    darkModeState={this.state.darkMode}
+                    highContrastModeState={this.state.highContrastMode}
+                    closeModal={() => this.setState({settingsModal: false})}
+                    hardModeChange={this.switchChangeFactory("hardMode")}
+                    darkModeChange={this.switchChangeFactory("darkMode")}
+                    highContrastModeChange={this.switchChangeFactory("highContrastMode")}
+                />
             </div>
         );
     }

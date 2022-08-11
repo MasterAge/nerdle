@@ -16,10 +16,6 @@
     font-size: 13px;
 }
 
-.statsRow {
-    margin-top: -30px;
-}
-
 .statCell {
     margin: 0 10px;
     width: 60px;
@@ -50,4 +46,21 @@
 .graphBarLabel {
     text-align: right;
     padding: 0px 10px;
+}
+
+/* Settings Modal */
+.settingLine {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+.settingName {
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.settingDescription {
+    font-size: 14px;
+    color: gray;
 }
