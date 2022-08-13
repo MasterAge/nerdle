@@ -3,7 +3,7 @@ import {NavBar} from "./NavBar/NavBar";
 import {LetterDisplay} from "./LetterDisplay/LetterDisplay";
 import './Main.css';
 import {Keyboard} from "./Keyboard/Keyboard";
-import {KeyState, LetterState, LetterStates, loadStats, PlayerStats, saveStats, MAX_ATTEMPTS} from "./Models";
+import {KeyState, LetterState, LetterStates, loadStats, MAX_ATTEMPTS, PlayerStats, saveStats} from "./Models";
 import {Popup} from "./Popup/Popup";
 import {HelpModal} from "./Modal/HelpModal";
 import {StatsModal} from "./Modal/StatsModal";
@@ -57,7 +57,6 @@ export class Main extends React.Component<{}, MainState> {
             })
         });
         this.state = this.reset();
-        console.log(typeof this.state.guesses)
     }
 
     reset = (setState: boolean = false): MainState => {
@@ -96,12 +95,60 @@ export class Main extends React.Component<{}, MainState> {
         this.addPopup(this.word);
     }
 
+    positionToString = (position: number): string => {
+        if (position == 1) {
+            return "1st"
+        } else if (position == 2 ) {
+            return "2nd"
+        } else {
+            return String(position) + "th"
+        }
+    }
+
+    validHardModeSubmission = (guessedWord: string): boolean => {
+        console.log(this.state.guesses.slice(0, this.attempt))
+        for (const guess of this.state.guesses.slice(0, this.attempt)) {
+            let correctMessage = "";
+            let closeMessage = "";
+
+            for (const [index, letterState] of guess.entries()) {
+                if (letterState.state == LetterStates.CORRECT && guessedWord[index] != letterState.name) {
+                    correctMessage = `${this.positionToString(index + 1)} letter must be ${letterState.name}`;
+                    break;
+                }
+
+                if (letterState.state == LetterStates.CLOSE && guessedWord.indexOf(letterState.name) < 0) {
+                    closeMessage = `Guess must contain ${letterState.name}`;
+                    // Not breaking because we might find a previous correct letter guess.
+                    // Correct letters have higher precedence.
+                }
+            }
+
+            if (correctMessage.length == 0 && closeMessage.length == 0) {
+                continue;
+            }
+
+            this.addPopup((correctMessage.length > 0) ? correctMessage : closeMessage);
+            return false;
+        }
+
+        return true;
+    }
+
     submit = () => {
         const guessedWord = this.state.guesses[this.attempt]
             .map(letterState => letterState.name)
             .join("");
 
-        if (this.lettersEntered == 5 && this.wordList.includes(guessedWord)) {
+        if (!this.wordList.includes(guessedWord)) {
+            this.addPopup("Not in word list")
+        } else if (this.lettersEntered < 5) {
+            this.addPopup("Not enough letters");
+        } else if (this.state.hardMode && !this.validHardModeSubmission(guessedWord)) {
+            // validHardModeSubmission will add a popup if it's invalid, so just return.
+            return;
+        } else {
+            // Valid Guess
             const keyboardState = this.state.keyboard;
             const guesses = this.state.guesses;
 
@@ -140,13 +187,7 @@ export class Main extends React.Component<{}, MainState> {
             this.addPopup(popupMessage);
             this.playerStats.addGame(this.attempt + 1, won);
             setTimeout(() => this.setState({statsModal: true}), 1000);
-
             saveStats(this.playerStats);
-
-        } else if (!this.wordList.includes(guessedWord)) {
-            this.addPopup("Not in word list")
-        } else if (this.lettersEntered > 0) {
-            this.addPopup("Not enough letters");
         }
     }
 
