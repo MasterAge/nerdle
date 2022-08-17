@@ -12,7 +12,7 @@ export function HelpModal(props: CommonModalProps)  {
             <hr/>
             <p><b>Examples</b></p>
             <div className="cellRow modalCellRow">
-                <div className="baseCell correctLetterCell">W</div>
+                <div className="baseCell correctLetterCell revealedLetter">W</div>
                 <div className="baseCell activeCell">E</div>
                 <div className="baseCell activeCell">A</div>
                 <div className="baseCell activeCell">R</div>
@@ -21,7 +21,7 @@ export function HelpModal(props: CommonModalProps)  {
             <p>The letter W is in the word and in the correct spot.</p>
             <div className="cellRow modalCellRow">
                 <div className="baseCell activeCell">P</div>
-                <div className="baseCell closeLetterCell">I</div>
+                <div className="baseCell closeLetterCell revealedLetter">I</div>
                 <div className="baseCell activeCell">L</div>
                 <div className="baseCell activeCell">L</div>
                 <div className="baseCell activeCell">S</div>
@@ -32,7 +32,7 @@ export function HelpModal(props: CommonModalProps)  {
                 <div className="baseCell activeCell">V</div>
                 <div className="baseCell activeCell">A</div>
                 <div className="baseCell activeCell">G</div>
-                <div className="baseCell incorrectLetterCell">U</div>
+                <div className="baseCell incorrectLetterCell revealedLetter">U</div>
                 <div className="baseCell activeCell">E</div>
             </div>
             <p>The letter U is not in the word in any spot.</p>

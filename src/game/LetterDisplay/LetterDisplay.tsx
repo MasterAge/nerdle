@@ -21,9 +21,9 @@ export function LetterCell(props: LetterCellProps) {
 }
 
 export const stateClasses: Map<LetterStates, string> = new Map([
-    [LetterStates.INCORRECT, "incorrectLetterCell"],
-    [LetterStates.CLOSE, "closeLetterCell"],
-    [LetterStates.CORRECT, "correctLetterCell"],
+    [LetterStates.INCORRECT, "revealedLetter incorrectLetterCell"],
+    [LetterStates.CLOSE, "revealedLetter closeLetterCell"],
+    [LetterStates.CORRECT, "revealedLetter correctLetterCell"],
 ]);
 
 export interface LetterDisplayProps {

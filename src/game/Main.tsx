@@ -107,6 +107,7 @@ export class Main extends React.Component<{}, MainState> {
 
     validHardModeSubmission = (guessedWord: string): boolean => {
         console.log(this.state.guesses.slice(0, this.attempt))
+
         for (const guess of this.state.guesses.slice(0, this.attempt)) {
             let correctMessage = "";
             let closeMessage = "";
@@ -151,6 +152,7 @@ export class Main extends React.Component<{}, MainState> {
             // Valid Guess
             const keyboardState = this.state.keyboard;
             const guesses = this.state.guesses;
+            const guessedLetters = guessedWord.split("")
 
             guesses[this.attempt].forEach((letterState, index) => {
                 const letter = letterState.name;
@@ -159,9 +161,19 @@ export class Main extends React.Component<{}, MainState> {
                     return;
                 }
 
+                // find how many times this letter appears in the guess
+                const guessLetterInstances = guessedLetters
+                    .slice(0, index)
+                    .reduce((total, next) => (next == letter) ? total + 1 : total, 0);
+
+                const wordLetterInstances = this.word.split("")
+                    .reduce((total, next) => (next == letter) ? total + 1 : total, 0)
+
                 if (letter == this.word[index]) {
                     letterState.state = LetterStates.CORRECT;
-                } else if (!this.word.includes(letter)) {
+                // If the word has more instances of this letter than we have processed so far, set the state to close.
+                // Otherwise if we have more/equal instances than the word, we will set this to incorrect
+                } else if (!this.word.includes(letter) || guessLetterInstances >= wordLetterInstances) {
                     letterState.state = LetterStates.INCORRECT;
                 } else {
                     letterState.state = LetterStates.CLOSE;

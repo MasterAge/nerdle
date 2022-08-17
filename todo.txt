@@ -1,11 +1,12 @@
-options
+high contrast mode
 dark mode
 grid instead of flexbox for letter display
 shrink on size reduction
-animations
 
 Done:
 Help
 modal heading text alignment
 stats
 replace bootstrap with material ui https://mui.com/material-ui/
+options
+animations
