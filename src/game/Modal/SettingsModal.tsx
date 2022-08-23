@@ -1,12 +1,59 @@
 import React from "react";
+import {css} from "@emotion/react";
 import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
-import {Switch} from "@mui/material";
+import {createTheme, styled, Switch} from "@mui/material";
+import {ColourTheme} from "../Style";
+
+// Copied from the MUI docs: https://mui.com/material-ui/react-switch/#customization ant style
+const IOSSwitch = styled(Switch)(({ theme }) => ({
+    width: 36,
+    height: 18,
+    padding: 0,
+    display: 'flex',
+    '&:active': {
+        '& .MuiSwitch-thumb': {
+            width: 15,
+        },
+        '& .MuiSwitch-switchBase.Mui-checked': {
+            transform: 'translateX(13px)',
+        },
+    },
+    '& .MuiSwitch-switchBase': {
+        padding: 2,
+        '&.Mui-checked': {
+            transform: 'translateX(17px)',
+            color: '#fff',
+            '& + .MuiSwitch-track': {
+                opacity: 1,
+                backgroundColor: (theme as unknown as ColourTheme).colors.correct,
+            },
+        },
+    },
+    '& .MuiSwitch-thumb': {
+        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        transition: theme.transitions.create(['width'], {
+            duration: 200,
+        }),
+    },
+    '& .MuiSwitch-track': {
+        borderRadius: 18 / 2,
+        opacity: 1,
+        backgroundColor:
+            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+        boxSizing: 'border-box',
+    },
+}));
+
 
 interface SettingProps {
     name: string;
     description?: string;
     checked: boolean;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    theme: ColourTheme;
 }
 
 export function Setting(props: SettingProps) {
@@ -17,10 +64,11 @@ export function Setting(props: SettingProps) {
                     <div className="settingName">{props.name}</div>
                     <div className="settingDescription">{props.description}</div>
                 </div>
-                <Switch
+                <IOSSwitch
                     checked={props.checked}
                     onChange={props.onChange}
-                    inputProps={{ 'aria-label': 'controlled' }}
+                    inputProps={{ 'aria-label': 'ant design' }}
+                    theme={createTheme(undefined, props.theme)}
                 />
             </div>
             <hr/>
@@ -37,6 +85,8 @@ interface SettingsModalProps extends CommonModalProps{
 
     highContrastModeState: boolean;
     highContrastModeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+
+    theme: ColourTheme
 }
 
 export function SettingsModal(props: SettingsModalProps) {
@@ -47,17 +97,20 @@ export function SettingsModal(props: SettingsModalProps) {
                 description="Any revealed hints must be used in subsequent guesses"
                 checked={props.hardModeState}
                 onChange={props.hardModeChange}
+                theme={props.theme}
             />
             <Setting
                 name="Dark Mode"
                 checked={props.darkModeState}
                 onChange={props.darkModeChange}
+                theme={props.theme}
             />
             <Setting
                 name="High Contrast Mode"
                 description="For improved color vision"
                 checked={props.highContrastModeState}
                 onChange={props.highContrastModeChange}
+                theme={props.theme}
             />
         </CommonModal>
     );

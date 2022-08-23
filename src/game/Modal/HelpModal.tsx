@@ -1,8 +1,15 @@
 import React from "react";
 import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
 import "./Modals.css";
+import {LetterCell} from "../LetterDisplay/LetterDisplay";
+import {LetterStates} from "../Models";
+import {ColourTheme} from "../Style";
 
-export function HelpModal(props: CommonModalProps)  {
+interface HelpModalProps extends CommonModalProps {
+    theme: ColourTheme;
+}
+
+export function HelpModal(props: HelpModalProps)  {
     return (
         <CommonModal title={props.title} show={props.show} closeModal={props.closeModal}>
             <p>Guess the NERDLE in 6 tries.</p>
@@ -12,28 +19,28 @@ export function HelpModal(props: CommonModalProps)  {
             <hr/>
             <p><b>Examples</b></p>
             <div className="cellRow modalCellRow">
-                <div className="baseCell correctLetterCell revealedLetter">W</div>
-                <div className="baseCell activeCell">E</div>
-                <div className="baseCell activeCell">A</div>
-                <div className="baseCell activeCell">R</div>
-                <div className="baseCell activeCell">Y</div>
+                <LetterCell letter={"W"} letterState={LetterStates.CORRECT} theme={props.theme}/>
+                <LetterCell letter={"E"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"A"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"R"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"Y"} letterState={LetterStates.BASE} theme={props.theme}/>
             </div>
             <p>The letter W is in the word and in the correct spot.</p>
             <div className="cellRow modalCellRow">
-                <div className="baseCell activeCell">P</div>
-                <div className="baseCell closeLetterCell revealedLetter">I</div>
-                <div className="baseCell activeCell">L</div>
-                <div className="baseCell activeCell">L</div>
-                <div className="baseCell activeCell">S</div>
+                <LetterCell letter={"P"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"I"} letterState={LetterStates.CLOSE} theme={props.theme}/>
+                <LetterCell letter={"L"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"L"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"S"} letterState={LetterStates.BASE} theme={props.theme}/>
             </div>
             <p>The letter I is in the word but in the wrong spot.</p>
 
             <div className="cellRow modalCellRow">
-                <div className="baseCell activeCell">V</div>
-                <div className="baseCell activeCell">A</div>
-                <div className="baseCell activeCell">G</div>
-                <div className="baseCell incorrectLetterCell revealedLetter">U</div>
-                <div className="baseCell activeCell">E</div>
+                <LetterCell letter={"V"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"A"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"G"} letterState={LetterStates.BASE} theme={props.theme}/>
+                <LetterCell letter={"U"} letterState={LetterStates.INCORRECT} theme={props.theme}/>
+                <LetterCell letter={"E"} letterState={LetterStates.BASE} theme={props.theme}/>
             </div>
             <p>The letter U is not in the word in any spot.</p>
         <br/>

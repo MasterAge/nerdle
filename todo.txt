@@ -1,5 +1,7 @@
+
 high contrast mode
 dark mode
+saving settings
 grid instead of flexbox for letter display
 shrink on size reduction
 

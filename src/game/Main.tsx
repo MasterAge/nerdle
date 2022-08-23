@@ -8,6 +8,7 @@ import {Popup} from "./Popup/Popup";
 import {HelpModal} from "./Modal/HelpModal";
 import {StatsModal} from "./Modal/StatsModal";
 import {SettingsModal} from "./Modal/SettingsModal";
+import {ColourTheme, defaultTheme, highContrast} from "./Style";
 
 function objectArray<Type>(numElements: number, elementFactory: () => Type): Array<Type> {
     return new Array(numElements).fill(null).map(elementFactory);
@@ -23,6 +24,7 @@ interface MainState {
     hardMode: boolean;
     darkMode: boolean;
     highContrastMode: boolean;
+    colourTheme: ColourTheme;
 }
 
 export class Main extends React.Component<{}, MainState> {
@@ -56,25 +58,29 @@ export class Main extends React.Component<{}, MainState> {
                 this.pickWord();
             })
         });
-        this.state = this.reset();
-    }
-
-    reset = (setState: boolean = false): MainState => {
-        const guesses: Array<Array<LetterState>> = objectArray(MAX_ATTEMPTS,
-            () => objectArray(5, () => new LetterState("")));
-
-        const keyboard = new Map(this.KEYBOARD_LAYOUT.flat().map(key => [key, new KeyState(key, this.guessFactory(key))]));
-
-        const state = {
-            guesses: guesses,
-            keyboard: keyboard,
-            popupList: [],
+        this.state = {
+            ...this.reset(),
             helpModal: false,
             settingsModal: false,
             statsModal: false,
             hardMode: false,
             darkMode: false,
             highContrastMode: false,
+            colourTheme: defaultTheme,
+        };
+    }
+
+    reset = (setState: boolean = false): Pick<MainState, "guesses" | "keyboard" | "popupList"> => {
+        const guesses: Array<Array<LetterState>> = objectArray(MAX_ATTEMPTS,
+            () => objectArray(5, () => new LetterState("")));
+
+        const keyboard = new Map(
+            this.KEYBOARD_LAYOUT.flat().map(key => [key, new KeyState(key, this.guessFactory(key))]));
+
+        const state = {
+            guesses: guesses,
+            keyboard: keyboard,
+            popupList: [],
         };
 
         if (setState) {
@@ -84,6 +90,7 @@ export class Main extends React.Component<{}, MainState> {
         if (this.wordList.length > 0) {
             this.pickWord();
         }
+
         this.lettersEntered = 0;
         this.attempt = 0;
 
@@ -268,6 +275,13 @@ export class Main extends React.Component<{}, MainState> {
                 this.setState({[key]: event.target.checked} as unknown as Pick<MainState, keyof MainState>)
     }
 
+    highContrastChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            highContrastMode: event.target.checked,
+            colourTheme: (event.target.checked) ? highContrast : defaultTheme
+        })
+    }
+
     render() {
         return (
             <div className="gameContainer">
@@ -277,7 +291,7 @@ export class Main extends React.Component<{}, MainState> {
                     stats={() => this.setState({statsModal: true})}
                     settings={() => this.setState({settingsModal: true})}
                 />
-                <LetterDisplay cells={this.state.guesses}/>
+                <LetterDisplay cells={this.state.guesses} theme={this.state.colourTheme}/>
                 <Keyboard
                     keystate={this.state.keyboard}
                     keyboardLayout={this.KEYBOARD_LAYOUT}
@@ -286,14 +300,16 @@ export class Main extends React.Component<{}, MainState> {
                 />
                 <div className="popup-container">
                     {this.state.popupList.map((message, index) =>
-                        <Popup removeMe={this.removePopup} duration_ms={3000} index={index} key={index}>
+                        <Popup removeMe={this.removePopup}
+                               duration_ms={3000} index={index} key={index}>
                             {message}
                         </Popup>)}
                 </div>
                 <HelpModal
                     title={"How to play"}
                     show={this.state.helpModal}
-                    closeModal={() => this.setState({helpModal: false})}/>
+                    closeModal={() => this.setState({helpModal: false})}
+                    theme={this.state.colourTheme}/>
                 <StatsModal
                     title={"STATISTICS"}
                     show={this.state.statsModal}
@@ -308,7 +324,8 @@ export class Main extends React.Component<{}, MainState> {
                     closeModal={() => this.setState({settingsModal: false})}
                     hardModeChange={this.switchChangeFactory("hardMode")}
                     darkModeChange={this.switchChangeFactory("darkMode")}
-                    highContrastModeChange={this.switchChangeFactory("highContrastMode")}
+                    highContrastModeChange={this.highContrastChange}
+                    theme={this.state.colourTheme}
                 />
             </div>
         );
