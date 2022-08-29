@@ -1,4 +1,3 @@
-high contrast mode
 dark mode
 grid instead of flexbox for letter display
 shrink on size reduction
@@ -12,3 +11,4 @@ replace bootstrap with material ui https://mui.com/material-ui/
 options
 animations
 saving settings
+high contrast mode
