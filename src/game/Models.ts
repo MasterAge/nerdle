@@ -1,3 +1,5 @@
+import {Settings} from "./Main";
+
 export const MAX_ATTEMPTS: number = 6;
 
 export enum LetterStates {
@@ -69,6 +71,11 @@ export class PlayerStats implements PlayerData{
 
 
 const PLAYER_STATS_KEY = "playerStats";
+const SETTINGS_KEY = "settings";
+
+export function saveSettings(settings: Settings) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+}
 
 export function saveStats(stats: PlayerStats) {
     localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats))
@@ -82,4 +89,13 @@ export function loadStats(): PlayerStats {
         return new PlayerStats(played, wins, currentStreak, maxStreak, winDistribution);
     }
     return new PlayerStats();
+}
+
+export function loadSettings(): Settings {
+    const settingsString: string | null = localStorage.getItem(SETTINGS_KEY);
+
+    if (settingsString) {
+        return JSON.parse(settingsString) as Settings;
+    }
+    return {hardMode: false, darkMode: false, highContrastMode: false};
 }

@@ -1,8 +1,7 @@
 import {LetterStates} from "./Models";
 import {Theme} from "@emotion/react";
-import {ThemeOptions} from "@mui/system/createTheme/createTheme";
 
-export interface ColourTheme extends ThemeOptions {
+export interface ColourTheme extends Theme {
     colors: {
         correct: string;
         close: string;

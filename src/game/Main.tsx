@@ -3,7 +3,16 @@ import {NavBar} from "./NavBar/NavBar";
 import {LetterDisplay} from "./LetterDisplay/LetterDisplay";
 import './Main.css';
 import {Keyboard} from "./Keyboard/Keyboard";
-import {KeyState, LetterState, LetterStates, loadStats, MAX_ATTEMPTS, PlayerStats, saveStats} from "./Models";
+import {
+    KeyState,
+    LetterState,
+    LetterStates, loadSettings,
+    loadStats,
+    MAX_ATTEMPTS,
+    PlayerStats,
+    saveSettings,
+    saveStats
+} from "./Models";
 import {Popup} from "./Popup/Popup";
 import {HelpModal} from "./Modal/HelpModal";
 import {StatsModal} from "./Modal/StatsModal";
@@ -14,7 +23,13 @@ function objectArray<Type>(numElements: number, elementFactory: () => Type): Arr
     return new Array(numElements).fill(null).map(elementFactory);
 }
 
-interface MainState {
+export interface Settings {
+    hardMode: boolean;
+    darkMode: boolean;
+    highContrastMode: boolean;
+}
+
+interface MainState extends Settings {
     guesses: Array<Array<LetterState>>;
     keyboard: Map<string, KeyState>;
     popupList: Array<string>;
@@ -58,15 +73,16 @@ export class Main extends React.Component<{}, MainState> {
                 this.pickWord();
             })
         });
+
+        const settings = loadSettings();
+
         this.state = {
             ...this.reset(),
+            ...settings,
             helpModal: false,
             settingsModal: false,
             statsModal: false,
-            hardMode: false,
-            darkMode: false,
-            highContrastMode: false,
-            colourTheme: defaultTheme,
+            colourTheme: (settings.highContrastMode) ? highContrast : defaultTheme,
         };
     }
 
@@ -105,7 +121,7 @@ export class Main extends React.Component<{}, MainState> {
     positionToString = (position: number): string => {
         if (position == 1) {
             return "1st"
-        } else if (position == 2 ) {
+        } else if (position == 2) {
             return "2nd"
         } else {
             return String(position) + "th"
@@ -178,8 +194,8 @@ export class Main extends React.Component<{}, MainState> {
 
                 if (letter == this.word[index]) {
                     letterState.state = LetterStates.CORRECT;
-                // If the word has more instances of this letter than we have processed so far, set the state to close.
-                // Otherwise if we have more/equal instances than the word, we will set this to incorrect
+                    // If the word has more instances of this letter than we have processed so far, set the state to close.
+                    // Otherwise if we have more/equal instances than the word, we will set this to incorrect
                 } else if (!this.word.includes(letter) || guessLetterInstances >= wordLetterInstances) {
                     letterState.state = LetterStates.INCORRECT;
                 } else {
@@ -270,16 +286,29 @@ export class Main extends React.Component<{}, MainState> {
         this.setState({popupList: popupList})
     }
 
-    switchChangeFactory = (key: keyof MainState) => {
-        return (event: React.ChangeEvent<HTMLInputElement>) =>
-                this.setState({[key]: event.target.checked} as unknown as Pick<MainState, keyof MainState>)
+    updateSettings = (state: keyof Settings, value: boolean) => {
+        const settings: Settings = {
+            hardMode: this.state.hardMode,
+            darkMode: this.state.darkMode,
+            highContrastMode: this.state.highContrastMode
+        };
+        settings[state] = value;
+        saveSettings(settings)
+    }
+
+    switchChangeFactory = (key: keyof Settings) => {
+        return (event: React.ChangeEvent<HTMLInputElement>) => {
+            this.setState({[key]: event.target.checked} as unknown as Pick<MainState, keyof MainState>)
+            this.updateSettings(key, event.target.checked)
+        }
     }
 
     highContrastChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             highContrastMode: event.target.checked,
             colourTheme: (event.target.checked) ? highContrast : defaultTheme
-        })
+        });
+        this.updateSettings("highContrastMode", event.target.checked)
     }
 
     render() {
@@ -297,6 +326,7 @@ export class Main extends React.Component<{}, MainState> {
                     keyboardLayout={this.KEYBOARD_LAYOUT}
                     enterClicked={this.submit}
                     backspaceClicked={this.backspace}
+                    theme={this.state.colourTheme}
                 />
                 <div className="popup-container">
                     {this.state.popupList.map((message, index) =>

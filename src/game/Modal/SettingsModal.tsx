@@ -1,11 +1,15 @@
 import React from "react";
-import {css} from "@emotion/react";
 import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
-import {createTheme, styled, Switch} from "@mui/material";
+import {Switch} from "@mui/material";
 import {ColourTheme} from "../Style";
+import styled from "@emotion/styled";
+
+interface StyledSwitchProps {
+    theme: ColourTheme;
+}
 
 // Copied from the MUI docs: https://mui.com/material-ui/react-switch/#customization ant style
-const IOSSwitch = styled(Switch)(({ theme }) => ({
+const IOSSwitch = styled(Switch)<StyledSwitchProps>(props => ({
     width: 36,
     height: 18,
     padding: 0,
@@ -22,10 +26,10 @@ const IOSSwitch = styled(Switch)(({ theme }) => ({
         padding: 2,
         '&.Mui-checked': {
             transform: 'translateX(17px)',
-            color: '#fff',
+            color: '#ffffff',
             '& + .MuiSwitch-track': {
                 opacity: 1,
-                backgroundColor: (theme as unknown as ColourTheme).colors.correct,
+                backgroundColor: props.theme.colors.correct,
             },
         },
     },
@@ -34,19 +38,15 @@ const IOSSwitch = styled(Switch)(({ theme }) => ({
         width: 14,
         height: 14,
         borderRadius: 7,
-        transition: theme.transitions.create(['width'], {
-            duration: 200,
-        }),
+        transition: 'width 200ms',
     },
     '& .MuiSwitch-track': {
         borderRadius: 18 / 2,
         opacity: 1,
-        backgroundColor:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+        backgroundColor: 'rgba(0,0,0,.25)',
         boxSizing: 'border-box',
     },
 }));
-
 
 interface SettingProps {
     name: string;
@@ -68,7 +68,7 @@ export function Setting(props: SettingProps) {
                     checked={props.checked}
                     onChange={props.onChange}
                     inputProps={{ 'aria-label': 'ant design' }}
-                    theme={createTheme(undefined, props.theme)}
+                    theme={props.theme}
                 />
             </div>
             <hr/>
@@ -101,6 +101,7 @@ export function SettingsModal(props: SettingsModalProps) {
             />
             <Setting
                 name="Dark Mode"
+                description="Turn the lights off"
                 checked={props.darkModeState}
                 onChange={props.darkModeChange}
                 theme={props.theme}
