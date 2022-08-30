@@ -4,7 +4,7 @@ A recreation of the popular game [Wordle](https://www.nytimes.com/games/wordle/i
 `Gif goes here`
 
 # How to access
-Play nerdle now at: 
+Play Nerdle now at: https://masterage.github.io/nerdle
 
 ## Self-hosted
 Requirements:
