@@ -1,7 +1,6 @@
 dark mode
-grid instead of flexbox for letter display
-shrink on size reduction
 daily nerdle
+host on github pages
 
 Done:
 Help

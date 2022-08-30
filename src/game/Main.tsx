@@ -115,7 +115,7 @@ export class Main extends React.Component<{}, MainState> {
 
     pickWord = () => {
         this.word = this.wordList[Math.floor(Math.random() * this.wordList.length)];
-        this.addPopup(this.word);
+        // this.addPopup(this.word);
     }
 
     positionToString = (position: number): string => {
