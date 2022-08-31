@@ -58,17 +58,12 @@ const revealAnimFactory = (color: string) => css`
   }
 `
 
-const baseCell = css({
-    width: "60px",
-    height: "60px",
-    margin: "2px",
-
-    fontWeight: "bold",
-    fontSize: "28px",
-    lineHeight: "60px",
-
-    textAlign: "center",
-})
+const baseCell = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+`;
 
 const activeCell = css({animation: `${popFrames} 0.1s linear`})
 
@@ -112,23 +107,37 @@ export interface LetterDisplayProps {
 }
 
 export function LetterDisplay(props: LetterDisplayProps) {
-    const cellLists = props.cells.map((cellList, parentIndex) =>
-        <div key={parentIndex} className="cellRow">
-            {cellList.map((letterState, index) =>
-                // Increase parent index by an order of magnitude
-                // E.g. 1 => 10, 2 => 20 and thus [1][2] => 12
-                <LetterCell key={parentIndex * 10 + index}
-                            letter={letterState.name}
-                            letterState={letterState.state}
-                            theme={props.theme}
-                />
-            )}
-        </div>
-    );
-
     return (
-        <div css={css`margin: auto;`}>
-            {cellLists}
+        <div css={css`
+              margin: auto;
+              display: grid;
+              grid-gap: 4px;
+              grid-template-columns: repeat(5, 1fr);
+              grid-template-rows: repeat(6, 1fr);
+              padding: 10px 0;
+
+              // Ensure the width is at most 336px, otherwise reduce it according to the page height
+              width: min(336px, 40vh);
+              height: min(404px, 50vh);
+
+              font-size: 30px;
+
+              @media (max-height: 580px) {
+                font-size: 18px;
+              }
+          `}
+        >
+            {props.cells.map((cellList, parentIndex) =>
+                cellList.map((letterState, index) =>
+                    // Increase parent index by an order of magnitude
+                    // E.g. 1 => 10, 2 => 20 and thus [1][2] => 12
+                    <LetterCell key={parentIndex * 10 + index}
+                                letter={letterState.name}
+                                letterState={letterState.state}
+                                theme={props.theme}
+                    />
+                )
+            )}
         </div>
     );
 }

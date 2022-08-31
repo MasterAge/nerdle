@@ -18,7 +18,6 @@ html, body, #root {
     margin: 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 .popup-container {
@@ -33,8 +32,4 @@ html, body, #root {
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
-}
-
-body,html {
-    min-height: 673px;
 }

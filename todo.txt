@@ -1,6 +1,6 @@
 dark mode
 daily nerdle
-host on github pages
+fix ios style/layout
 
 Done:
 Help
@@ -11,3 +11,6 @@ options
 animations
 saving settings
 high contrast mode
+host on github pages
+favicon
+use grid for letterdisplay
