@@ -338,12 +338,12 @@ export class Main extends React.Component<{}, MainState> {
                         </Popup>)}
                 </div>
                 <HelpModal
-                    title={"How to play"}
+                    title="HOW TO PLAY"
                     show={this.state.helpModal}
                     closeModal={() => this.setState({helpModal: false})}
                     theme={this.state.colourTheme}/>
                 <StatsModal
-                    title={"STATISTICS"}
+                    title="STATISTICS"
                     show={this.state.statsModal}
                     closeModal={() => this.setState({statsModal: false})}
                     stats={this.playerStats}/>
@@ -351,7 +351,7 @@ export class Main extends React.Component<{}, MainState> {
                     title="SETTINGS"
                     show={this.state.settingsModal}
                     hardModeState={this.state.hardMode}
-                    darkModeState={this.state.darkMode}
+                    darkModeState={false}
                     highContrastModeState={this.state.highContrastMode}
                     closeModal={() => this.setState({settingsModal: false})}
                     hardModeChange={this.switchChangeFactory("hardMode")}
