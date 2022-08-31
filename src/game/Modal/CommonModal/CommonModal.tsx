@@ -1,8 +1,9 @@
+/** @jsxImportSource @emotion/react */
 import React, {ReactNode} from "react";
 import {Dialog, DialogContent, DialogTitle, IconButton, Slide} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import './CommonModal.css';
 import {TransitionProps} from "@mui/material/transitions";
+import {css} from "@emotion/react";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -29,7 +30,7 @@ export function CommonModal(props: CommonModalProps) {
             maxWidth={"sm"}
             TransitionComponent={Transition}
         >
-            <DialogTitle className="modalTitle">
+            <DialogTitle css={css`text-align: center;`}>
                 {props.title.toUpperCase()}
                 <IconButton
                     aria-label="close"
