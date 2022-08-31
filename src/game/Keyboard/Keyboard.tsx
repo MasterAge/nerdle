@@ -19,18 +19,20 @@ const revealFrames = (color: string) =>  keyframes`
 `
 
 const baseLetter = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  font-weight: bold;
+  user-select: none;
+
   width: 44px;
   height: 64px;
   margin: 4px;
 
-  border-radius: 6px;
-
-  text-align: center;
-  vertical-align: center;
-  line-height: 60px;
-  font-weight: bold;
-
-  user-select: none;
+  @media (max-height: 650px) {
+      height: 44px;
+  }
 `;
 
 interface KeyProps {

@@ -1,8 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import {css, keyframes} from "@emotion/react";
-
-import './LetterDisplay.css';
 import {LetterState, LetterStates} from "../Models";
 import {getColour, ColourTheme} from "../Style";
 
