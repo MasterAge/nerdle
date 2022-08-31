@@ -1,6 +1,7 @@
-dark mode
 daily nerdle
 fix ios style/layout
+get wordle wordlist
+dark mode
 
 Done:
 Help

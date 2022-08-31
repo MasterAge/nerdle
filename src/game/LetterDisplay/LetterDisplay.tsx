@@ -37,23 +37,23 @@ const revealFrames = (color: string) =>  keyframes`
 `
 
 const revealAnimFactory = (color: string) => css`
-  &:nth-of-type(1) {
+  &:nth-of-type(5n + 1) {
     animation: ${revealFrames(color)} 500ms linear 0ms both;
   }
 
-  &:nth-of-type(2) {
+  &:nth-of-type(5n + 2) {
     animation: ${revealFrames(color)} 500ms linear 300ms both;
   }
 
-  &:nth-of-type(3) {
+  &:nth-of-type(5n + 3) {
     animation: ${revealFrames(color)} 500ms linear 600ms both;
   }
 
-  &:nth-of-type(4) {
+  &:nth-of-type(5n + 4) {
     animation: ${revealFrames(color)} 500ms linear 900ms both;
   }
 
-  &:nth-of-type(5) {
+  &:nth-of-type(5n + 5) {
     animation: ${revealFrames(color)} 500ms linear 1200ms both;
   }
 `
