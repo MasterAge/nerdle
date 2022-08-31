@@ -1,10 +1,9 @@
 # Nerdle
 A recreation of the popular game [Wordle](https://www.nytimes.com/games/wordle/index.html).
 
-`Gif goes here`
+![playing nerdle](assets/nerdle.gif)
 
-# How to access
-Play Nerdle now at: https://masterage.github.io/nerdle
+Play Nerdle at: https://masterage.github.io/nerdle
 
 ## Self-hosted
 Requirements:

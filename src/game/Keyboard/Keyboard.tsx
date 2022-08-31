@@ -30,7 +30,7 @@ const baseLetter = css`
   height: 64px;
   margin: 4px;
 
-  @media (max-height: 650px) {
+  @media (max-height: 580px) {
       height: 44px;
   }
 `;
