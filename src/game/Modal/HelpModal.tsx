@@ -1,9 +1,21 @@
+/** @jsxImportSource @emotion/react */
 import React from "react";
 import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
 import "./Modals.css";
 import {LetterCell} from "../LetterDisplay/LetterDisplay";
 import {LetterStates} from "../Models";
 import {ColourTheme} from "../Style";
+import {css} from "@emotion/react";
+
+const modalCellRow = css`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(1, 68px);
+  height: 68px;
+  width: 336px;
+  grid-gap: 4px;
+  font-size: 30px;
+`;
 
 interface HelpModalProps extends CommonModalProps {
     theme: ColourTheme;
@@ -18,7 +30,7 @@ export function HelpModal(props: HelpModalProps)  {
                 your guess was to the word.</p>
             <hr/>
             <p><b>Examples</b></p>
-            <div className="cellRow modalCellRow">
+            <div css={modalCellRow}>
                 <LetterCell letter={"W"} letterState={LetterStates.CORRECT} theme={props.theme}/>
                 <LetterCell letter={"E"} letterState={LetterStates.BASE} theme={props.theme}/>
                 <LetterCell letter={"A"} letterState={LetterStates.BASE} theme={props.theme}/>
@@ -26,7 +38,7 @@ export function HelpModal(props: HelpModalProps)  {
                 <LetterCell letter={"Y"} letterState={LetterStates.BASE} theme={props.theme}/>
             </div>
             <p>The letter W is in the word and in the correct spot.</p>
-            <div className="cellRow modalCellRow">
+            <div css={modalCellRow}>
                 <LetterCell letter={"P"} letterState={LetterStates.BASE} theme={props.theme}/>
                 <LetterCell letter={"I"} letterState={LetterStates.CLOSE} theme={props.theme}/>
                 <LetterCell letter={"L"} letterState={LetterStates.BASE} theme={props.theme}/>
@@ -35,7 +47,7 @@ export function HelpModal(props: HelpModalProps)  {
             </div>
             <p>The letter I is in the word but in the wrong spot.</p>
 
-            <div className="cellRow modalCellRow">
+            <div css={modalCellRow}>
                 <LetterCell letter={"V"} letterState={LetterStates.BASE} theme={props.theme}/>
                 <LetterCell letter={"A"} letterState={LetterStates.BASE} theme={props.theme}/>
                 <LetterCell letter={"G"} letterState={LetterStates.BASE} theme={props.theme}/>

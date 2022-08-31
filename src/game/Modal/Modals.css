@@ -1,9 +1,3 @@
-/* Help Modal */
-.modalCellRow {
-    justify-content: left;
-    align-items: flex-start;
-}
-
 /* StatDisplay */
 .statValue {
     font-size: 36px;

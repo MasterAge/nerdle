@@ -114,7 +114,10 @@ export class Main extends React.Component<{}, MainState> {
 
     pickWord = () => {
         this.word = this.wordList[Math.floor(Math.random() * this.wordList.length)];
-        // this.addPopup(this.word);
+        // pseudo debug mode check
+        if (document.location.hostname == "localhost") {
+            this.addPopup(this.word);
+        }
     }
 
     positionToString = (position: number): string => {
@@ -220,7 +223,7 @@ export class Main extends React.Component<{}, MainState> {
 
             this.addPopup(popupMessage);
             this.playerStats.addGame(this.attempt + 1, won);
-            setTimeout(() => this.setState({statsModal: true}), 1000);
+            setTimeout(() => this.setState({statsModal: true}), 2000);
             saveStats(this.playerStats);
         }
     }
