@@ -65,7 +65,7 @@ export class Main extends React.Component<{}, MainState> {
         this.word = "";
         this.wordList = [];
 
-        fetch(document.location.pathname + "/5letter_upper.txt").then(response => {
+        fetch(document.location.pathname + "/5letter_upper_wordle.txt").then(response => {
             response.text().then(content => {
                 this.wordList = content.split("\n");
                 this.pickWord();

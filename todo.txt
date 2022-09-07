@@ -1,6 +1,5 @@
 daily nerdle
-fix ios style/layout
-get wordle wordlist
+match current wordle
 dark mode
 
 Done:
@@ -15,3 +14,5 @@ high contrast mode
 host on github pages
 favicon
 use grid for letterdisplay
+fix ios style/layout
+get wordle wordlist
