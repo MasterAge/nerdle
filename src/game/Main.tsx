@@ -4,12 +4,16 @@ import {LetterDisplay} from "./LetterDisplay/LetterDisplay";
 import './Main.css';
 import {Keyboard} from "./Keyboard/Keyboard";
 import {
+    clearGuesses,
     KeyState,
     LetterState,
-    LetterStates, loadSettings,
+    LetterStates,
+    loadGuesses,
+    loadSettings,
     loadStats,
     MAX_ATTEMPTS,
     PlayerStats,
+    saveGuesses,
     saveSettings,
     saveStats
 } from "./Models";
@@ -27,6 +31,7 @@ export interface Settings {
     hardMode: boolean;
     darkMode: boolean;
     highContrastMode: boolean;
+    dailyNerdle: boolean;
 }
 
 interface MainState extends Settings {
@@ -39,6 +44,7 @@ interface MainState extends Settings {
     hardMode: boolean;
     darkMode: boolean;
     highContrastMode: boolean;
+    finished: boolean;
     colourTheme: ColourTheme;
 }
 
@@ -50,8 +56,10 @@ export class Main extends React.Component<{}, MainState> {
         ["Z", "X", "C", "V", "B", "N", "M"]
     ];
     SUCCESS_MESSAGE: Array<string> = ["Genius", "Magnificent", "Impressive", "Splendid", "Great", "Phew"];
+    MILLISECONDS_IN_DAY: number = (24 * 3600 * 1000);
 
     wordList: Array<string>;
+    wordListIndex: number;
     attempt: number;
     lettersEntered: number;
     word: string;
@@ -64,25 +72,72 @@ export class Main extends React.Component<{}, MainState> {
         this.lettersEntered = 0;
         this.word = "";
         this.wordList = [];
+        this.wordListIndex = 0;
 
         fetch(document.location.pathname + "/5letter_upper_wordle.txt").then(response => {
             response.text().then(content => {
                 this.wordList = content.split("\n");
-                this.pickWord();
+                this.pickWord(this.state.dailyNerdle);
             })
         });
 
         this.playerStats = loadStats();
         const settings = loadSettings();
+        let {guesses, keyboard, popupList} = this.reset();
+
+        let finished = false;
+        if (settings.dailyNerdle) {
+            const dailyNerdleData = this.loadDailyNerdle();
+            finished = dailyNerdleData[1]
+            if (dailyNerdleData[0].length > 0) {
+                guesses = dailyNerdleData[0]
+            }
+        }
 
         this.state = {
-            ...this.reset(),
             ...settings,
+            guesses: guesses,
+            keyboard: keyboard,
+            popupList: popupList,
             helpModal: false,
             settingsModal: false,
             statsModal: false,
+            finished: finished,
             colourTheme: (settings.highContrastMode) ? highContrast : defaultTheme,
         };
+    }
+
+    loadDailyNerdle = (): [Array<Array<LetterState>>, boolean] => {
+        const guesses = objectArray(MAX_ATTEMPTS,
+            () => objectArray(5, () => new LetterState("")));
+        let finished = false;
+
+        const guessData = loadGuesses();
+
+        // this.calcWordListIndex should return the next index if we have advanced a day since the last save.
+        if (guessData && guessData[1] == this.calcWordListIndex(true)) {
+            const storedGuesses = guessData[0];
+
+            storedGuesses.forEach((guess, i) => guess.forEach((state, j) => {
+                guesses[i][j].name = state.name;
+                guesses[i][j].state = state.state;
+            }));
+
+            // Count how many guesses have been populated.
+            this.attempt = storedGuesses.reduce(
+                (total, guess) => total + ((guess[0].state != LetterStates.BASE) ? 1 : 0),
+                0)
+
+            // Check if there was a correct guess
+            const alreadyWon = storedGuesses.some(guess => guess.every(letter => letter.state == LetterStates.CORRECT))
+            finished = alreadyWon || this.attempt == 5
+            return [guesses, finished]
+
+        } else {
+            clearGuesses();
+        }
+
+        return [[], false];
     }
 
     reset = (setState: boolean = false): Pick<MainState, "guesses" | "keyboard" | "popupList"> => {
@@ -96,6 +151,7 @@ export class Main extends React.Component<{}, MainState> {
             guesses: guesses,
             keyboard: keyboard,
             popupList: [],
+            finished: false
         };
 
         if (setState) {
@@ -103,7 +159,7 @@ export class Main extends React.Component<{}, MainState> {
         }
 
         if (this.wordList.length > 0) {
-            this.pickWord();
+            this.pickWord(this.state.dailyNerdle);
         }
 
         this.lettersEntered = 0;
@@ -112,8 +168,20 @@ export class Main extends React.Component<{}, MainState> {
         return state;
     }
 
-    pickWord = () => {
-        this.word = this.wordList[Math.floor(Math.random() * this.wordList.length)];
+    calcWordListIndex = (dailyNerdle: boolean) => {
+        if (dailyNerdle) {
+            const daysSinceEpoch = new Date().valueOf() / this.MILLISECONDS_IN_DAY;
+            const daysSinceStart = new Date(2021, 5, 19).valueOf() / this.MILLISECONDS_IN_DAY;
+            // Wordle is actually 19 days ahead of the wordlist.
+            return Math.floor(daysSinceEpoch - daysSinceStart + 19);
+        } else {
+            return Math.floor(Math.random() * this.wordList.length);
+        }
+    }
+
+    pickWord = (dailyNerdle: boolean) => {
+        this.wordListIndex = this.calcWordListIndex(dailyNerdle);
+        this.word = this.wordList[this.wordListIndex];
         // pseudo debug mode check
         if (document.location.hostname == "localhost") {
             this.addPopup(this.word);
@@ -166,7 +234,11 @@ export class Main extends React.Component<{}, MainState> {
             .map(letterState => letterState.name)
             .join("");
 
-        if (!this.wordList.includes(guessedWord)) {
+        if (this.state.guesses[this.attempt].every(guess => guess.state != LetterStates.BASE)
+            || this.attempt >= MAX_ATTEMPTS) {
+            // We've already completed
+            return;
+        } else if (!this.wordList.includes(guessedWord)) {
             this.addPopup("Not in word list")
         } else if (this.lettersEntered < 5) {
             this.addPopup("Not enough letters");
@@ -209,6 +281,10 @@ export class Main extends React.Component<{}, MainState> {
                 }
             });
 
+            if (this.state.dailyNerdle) {
+                saveGuesses(this.state.guesses, this.wordListIndex)
+            }
+
             if (this.word != guessedWord && this.attempt + 1 < MAX_ATTEMPTS) {
                 // Guesses remaining.
                 this.setState({keyboard: keyboardState, guesses: guesses})
@@ -223,7 +299,7 @@ export class Main extends React.Component<{}, MainState> {
 
             this.addPopup(popupMessage);
             this.playerStats.addGame(this.attempt + 1, won);
-            setTimeout(() => this.setState({statsModal: true}), 2000);
+            setTimeout(() => this.setState({statsModal: true, finished: true}), 2000);
             saveStats(this.playerStats);
         }
     }
@@ -292,7 +368,8 @@ export class Main extends React.Component<{}, MainState> {
         const settings: Settings = {
             hardMode: this.state.hardMode,
             darkMode: this.state.darkMode,
-            highContrastMode: this.state.highContrastMode
+            highContrastMode: this.state.highContrastMode,
+            dailyNerdle: this.state.dailyNerdle
         };
         settings[state] = value;
         saveSettings(settings)
@@ -313,6 +390,26 @@ export class Main extends React.Component<{}, MainState> {
         this.updateSettings("highContrastMode", event.target.checked)
     }
 
+    setDailyNerdle = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const enabled = event.target.checked;
+
+        let finished = this.state.finished;
+        let guesses = this.state.guesses;
+        if (enabled) {
+            const dailyNerdleData = this.loadDailyNerdle();
+            if (dailyNerdleData[0].length > 0) {
+                finished = dailyNerdleData[1];
+                guesses = dailyNerdleData[0];
+            }
+            this.setState({dailyNerdle: enabled, finished: finished, guesses: guesses});
+        } else {
+            this.reset(true);
+            this.setState({dailyNerdle: enabled});
+        }
+        this.pickWord(enabled);
+        this.updateSettings("dailyNerdle", enabled);
+    }
+
     render() {
         return (
             <div className="gameContainer">
@@ -321,6 +418,7 @@ export class Main extends React.Component<{}, MainState> {
                     help={() => this.setState({helpModal: true})}
                     stats={() => this.setState({statsModal: true})}
                     settings={() => this.setState({settingsModal: true})}
+                    showNewGame={!this.state.dailyNerdle}
                 />
                 <LetterDisplay cells={this.state.guesses} theme={this.state.colourTheme}/>
                 <Keyboard
@@ -341,22 +439,23 @@ export class Main extends React.Component<{}, MainState> {
                     title="HOW TO PLAY"
                     show={this.state.helpModal}
                     closeModal={() => this.setState({helpModal: false})}
-                    theme={this.state.colourTheme}/>
+                    theme={this.state.colourTheme}
+                />
                 <StatsModal
                     title="STATISTICS"
                     show={this.state.statsModal}
                     closeModal={() => this.setState({statsModal: false})}
-                    stats={this.playerStats}/>
+                    stats={this.playerStats}
+                    showTime={this.state.finished && this.state.dailyNerdle}
+                />
                 <SettingsModal
                     title="SETTINGS"
                     show={this.state.settingsModal}
-                    hardModeState={this.state.hardMode}
-                    darkModeState={false}
-                    highContrastModeState={this.state.highContrastMode}
                     closeModal={() => this.setState({settingsModal: false})}
-                    hardModeChange={this.switchChangeFactory("hardMode")}
-                    darkModeChange={this.switchChangeFactory("darkMode")}
-                    highContrastModeChange={this.highContrastChange}
+                    hardMode={{state: this.state.hardMode, onChange: this.switchChangeFactory("hardMode")}}
+                    darkMode={{state: false, onChange: this.switchChangeFactory("darkMode")}}
+                    highContrastMode={{state: this.state.highContrastMode, onChange: this.highContrastChange}}
+                    dailyNerdle={{state: this.state.dailyNerdle, onChange: this.setDailyNerdle}}
                     theme={this.state.colourTheme}
                 />
             </div>

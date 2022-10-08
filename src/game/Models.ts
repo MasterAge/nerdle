@@ -10,9 +10,9 @@ export class LetterState {
     name: string;
     state: LetterStates;
 
-    constructor(name: string) {
+    constructor(name: string, state?: LetterStates) {
         this.name = name;
-        this.state = LetterStates.BASE;
+        this.state = state ?? LetterStates.BASE;
     }
 }
 
@@ -72,10 +72,7 @@ export class PlayerStats implements PlayerData{
 
 const PLAYER_STATS_KEY = "playerStats";
 const SETTINGS_KEY = "settings";
-
-export function saveSettings(settings: Settings) {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
-}
+const GUESSES_KEY = "guesses"
 
 export function saveStats(stats: PlayerStats) {
     localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats))
@@ -91,11 +88,42 @@ export function loadStats(): PlayerStats {
     return new PlayerStats();
 }
 
+export function saveSettings(settings: Settings) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+}
+
 export function loadSettings(): Settings {
     const settingsString: string | null = localStorage.getItem(SETTINGS_KEY);
 
     if (settingsString) {
         return JSON.parse(settingsString) as Settings;
     }
-    return {hardMode: false, darkMode: false, highContrastMode: false};
+    return {hardMode: false, darkMode: false, highContrastMode: false, dailyNerdle: false};
+}
+
+export interface GuessStorage {
+    guesses: Array<Array<LetterState>>;
+    wordListIndex: number;
+}
+
+export function saveGuesses(guesses: Array<Array<LetterState>>, wordListIndex: number) {
+    const guessStorage: GuessStorage = {
+        guesses, wordListIndex
+    }
+    localStorage.setItem(GUESSES_KEY, JSON.stringify(guessStorage))
+}
+
+export function loadGuesses(): [Array<Array<LetterState>>, number] | undefined {
+    const guessesString: string | null = localStorage.getItem(GUESSES_KEY);
+
+    if (guessesString) {
+        const guessStorage = JSON.parse(guessesString) as GuessStorage;
+
+        return [guessStorage.guesses, guessStorage.wordListIndex];
+    }
+    return undefined;
+}
+
+export function clearGuesses() {
+    localStorage.removeItem(GUESSES_KEY)
 }

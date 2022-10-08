@@ -48,11 +48,15 @@ const IOSSwitch = styled(Switch)<StyledSwitchProps>(props => ({
     },
 }));
 
+export interface SettingModel {
+    state: boolean;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
 interface SettingProps {
     name: string;
     description?: string;
-    checked: boolean;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    model: SettingModel
     theme: ColourTheme;
 }
 
@@ -65,8 +69,8 @@ export function Setting(props: SettingProps) {
                     <div className="settingDescription">{props.description}</div>
                 </div>
                 <IOSSwitch
-                    checked={props.checked}
-                    onChange={props.onChange}
+                    checked={props.model.state}
+                    onChange={props.model.onChange}
                     inputProps={{ 'aria-label': 'ant design' }}
                     theme={props.theme}
                 />
@@ -76,17 +80,13 @@ export function Setting(props: SettingProps) {
     )
 }
 
-interface SettingsModalProps extends CommonModalProps{
-    hardModeState: boolean;
-    hardModeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+interface SettingsModalProps extends CommonModalProps {
+    hardMode: SettingModel;
+    darkMode: SettingModel;
+    highContrastMode: SettingModel;
+    dailyNerdle: SettingModel;
 
-    darkModeState: boolean;
-    darkModeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-
-    highContrastModeState: boolean;
-    highContrastModeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-
-    theme: ColourTheme
+    theme: ColourTheme;
 }
 
 export function SettingsModal(props: SettingsModalProps) {
@@ -95,22 +95,25 @@ export function SettingsModal(props: SettingsModalProps) {
             <Setting
                 name="Hard Mode"
                 description="Any revealed hints must be used in subsequent guesses"
-                checked={props.hardModeState}
-                onChange={props.hardModeChange}
+                model={props.hardMode}
                 theme={props.theme}
             />
             <Setting
                 name="Dark Mode"
                 description="Turn the lights off"
-                checked={props.darkModeState}
-                onChange={props.darkModeChange}
+                model={props.darkMode}
                 theme={props.theme}
             />
             <Setting
                 name="High Contrast Mode"
                 description="For improved color vision"
-                checked={props.highContrastModeState}
-                onChange={props.highContrastModeChange}
+                model={props.highContrastMode}
+                theme={props.theme}
+            />
+            <Setting
+                name="Daily Nerdle"
+                description="One word per day, same word as Wordle"
+                model={props.dailyNerdle}
                 theme={props.theme}
             />
         </CommonModal>

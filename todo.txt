@@ -1,6 +1,7 @@
-daily nerdle
-match current wordle
+hard wordlist
 dark mode
+Resizable modals
+More guesses
 
 Done:
 Help
@@ -16,3 +17,5 @@ favicon
 use grid for letterdisplay
 fix ios style/layout
 get wordle wordlist
+daily nerdle
+    - timer

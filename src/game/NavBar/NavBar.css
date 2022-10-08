@@ -16,6 +16,10 @@
     vertical-align: initial;
 }
 
+.hidden-icon {
+    color: transparent;
+}
+
 .title {
     font-size: 34px;
     font-family: Anton, fantasy;

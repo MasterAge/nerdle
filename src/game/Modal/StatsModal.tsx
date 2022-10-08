@@ -3,6 +3,7 @@ import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
 import {DialogTitle} from "@mui/material";
 import {PlayerStats} from "../Models";
 import "./Modals.css";
+import Countdown from 'react-countdown';
 
 interface StatDisplayProps {
     value: number;
@@ -44,8 +45,17 @@ function GuessDistribution(props: GuessDistributionProps) {
     return <div>{rows}</div>;
 }
 
+/**
+ * Retrieves the Date for midnight tonight, i.e. the start of the next day.
+ */
+function getMidnight(): Date {
+    const current = new Date();
+    return new Date(current.getFullYear(), current.getMonth(), current.getDate(), 24)
+}
+
 interface StatsModalProps extends CommonModalProps {
     stats: PlayerStats;
+    showTime: boolean;
 }
 
 export function StatsModal(props: StatsModalProps) {
@@ -58,9 +68,17 @@ export function StatsModal(props: StatsModalProps) {
                 <StatDisplay value={props.stats.maxStreak} name="Max Streak"/>
             </div>
             <div>
-                <DialogTitle className="modalTitle">GUESS DISTRIBUTION</DialogTitle>
+                <DialogTitle>GUESS DISTRIBUTION</DialogTitle>
                 <GuessDistribution winDistribution={props.stats.winDistribution}/>
             </div>
+            {props.showTime &&
+            <div>
+                <hr/>
+                <DialogTitle>
+                    NEXT NERDLE IN <Countdown date={getMidnight()} daysInHours={true}/>
+                </DialogTitle>
+            </div>
+            }
         </CommonModal>
     );
 }
