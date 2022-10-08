@@ -1,4 +1,4 @@
-hard wordlist
+
 dark mode
 Resizable modals
 More guesses
@@ -19,3 +19,5 @@ fix ios style/layout
 get wordle wordlist
 daily nerdle
     - timer
+hard wordlist
+guess validation bug

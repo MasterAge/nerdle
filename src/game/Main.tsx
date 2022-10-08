@@ -111,7 +111,6 @@ export class Main extends React.Component<{}, MainState> {
             response.text().then(content => {
                 this.wordList = content.split("\n");
                 this.pickWord(this.state.dailyNerdle);
-                console.log(this.wordList.length);
             })
         });
     }
@@ -202,6 +201,8 @@ export class Main extends React.Component<{}, MainState> {
             return "1st"
         } else if (position == 2) {
             return "2nd"
+        } else if (position == 3) {
+            return "3rd"
         } else {
             return String(position) + "th"
         }
@@ -260,32 +261,54 @@ export class Main extends React.Component<{}, MainState> {
             const guesses = this.state.guesses;
             const guessedLetters = guessedWord.split("")
 
-            guesses[this.attempt].forEach((letterState, index) => {
+            const currentGuess = guesses[this.attempt];
+
+            // workout correct and incorrect letters
+            currentGuess.forEach((letterState, index) => {
                 const letter = letterState.name;
-                const keyState = keyboardState.get(letter)
-                if (!keyState) {
+
+                if (letter == this.word[index]) {
+                    letterState.state = LetterStates.CORRECT;
+                } else if (!this.word.includes(letter)) {
+                    letterState.state = LetterStates.INCORRECT;
+                } else {
                     return;
                 }
 
-                // find how many times this letter appears in the guess
+                const keyState = keyboardState.get(letter);
+                if (keyState && keyState.state != LetterStates.CORRECT) {
+                    keyState.state = letterState.state;
+                }
+            });
+
+            // workout close letters
+            currentGuess.forEach((letterState, index) => {
+                if (letterState.state != LetterStates.BASE) {
+                    return;
+                }
+
+                const letter = letterState.name;
+
+                // find how many times this letter appears in the guess so far
                 const guessLetterInstances = guessedLetters
                     .slice(0, index)
                     .reduce((total, next) => (next == letter) ? total + 1 : total, 0);
 
+                const correctGuessLetterInstances = guessedLetters
+                    .reduce((total, next, index) =>
+                        (next == letter && currentGuess[index].state == LetterStates.CORRECT) ? total + 1 : total, 0);
+
                 const wordLetterInstances = this.word.split("")
                     .reduce((total, next) => (next == letter) ? total + 1 : total, 0)
 
-                if (letter == this.word[index]) {
-                    letterState.state = LetterStates.CORRECT;
-                    // If the word has more instances of this letter than we have processed so far, set the state to close.
-                    // Otherwise if we have more/equal instances than the word, we will set this to incorrect
-                } else if (!this.word.includes(letter) || guessLetterInstances >= wordLetterInstances) {
+                if (correctGuessLetterInstances == wordLetterInstances || guessLetterInstances >= wordLetterInstances) {
                     letterState.state = LetterStates.INCORRECT;
-                } else {
+                } else if (guessLetterInstances < wordLetterInstances) {
                     letterState.state = LetterStates.CLOSE;
                 }
 
-                if (keyState.state != LetterStates.CORRECT) {
+                const keyState = keyboardState.get(letter);
+                if (keyState && keyState.state != LetterStates.CORRECT) {
                     keyState.state = letterState.state;
                 }
             });
