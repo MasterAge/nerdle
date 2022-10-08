@@ -32,6 +32,7 @@ export interface Settings {
     darkMode: boolean;
     highContrastMode: boolean;
     dailyNerdle: boolean;
+    wordleWordlist: boolean;
 }
 
 interface MainState extends Settings {
@@ -74,16 +75,11 @@ export class Main extends React.Component<{}, MainState> {
         this.wordList = [];
         this.wordListIndex = 0;
 
-        fetch(document.location.pathname + "/5letter_upper_wordle.txt").then(response => {
-            response.text().then(content => {
-                this.wordList = content.split("\n");
-                this.pickWord(this.state.dailyNerdle);
-            })
-        });
-
         this.playerStats = loadStats();
         const settings = loadSettings();
         let {guesses, keyboard, popupList} = this.reset();
+
+        this.loadWordlist(settings.wordleWordlist);
 
         let finished = false;
         if (settings.dailyNerdle) {
@@ -102,9 +98,22 @@ export class Main extends React.Component<{}, MainState> {
             helpModal: false,
             settingsModal: false,
             statsModal: false,
+
             finished: finished,
             colourTheme: (settings.highContrastMode) ? highContrast : defaultTheme,
         };
+    }
+
+    loadWordlist = (wordle_wordlist: boolean) => {
+        const wordlist = (wordle_wordlist) ? "/5letter_upper_wordle.txt" : "/5letter_upper.txt";
+
+        fetch(document.location.pathname + wordlist).then(response => {
+            response.text().then(content => {
+                this.wordList = content.split("\n");
+                this.pickWord(this.state.dailyNerdle);
+                console.log(this.wordList.length);
+            })
+        });
     }
 
     loadDailyNerdle = (): [Array<Array<LetterState>>, boolean] => {
@@ -369,7 +378,8 @@ export class Main extends React.Component<{}, MainState> {
             hardMode: this.state.hardMode,
             darkMode: this.state.darkMode,
             highContrastMode: this.state.highContrastMode,
-            dailyNerdle: this.state.dailyNerdle
+            dailyNerdle: this.state.dailyNerdle,
+            wordleWordlist: this.state.wordleWordlist
         };
         settings[state] = value;
         saveSettings(settings)
@@ -408,6 +418,14 @@ export class Main extends React.Component<{}, MainState> {
         }
         this.pickWord(enabled);
         this.updateSettings("dailyNerdle", enabled);
+    }
+
+    setWordList = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const checked = event.target.checked;
+        this.setState({wordleWordlist: checked});
+        this.updateSettings("wordleWordlist", checked)
+
+        this.loadWordlist(checked);
     }
 
     render() {
@@ -456,6 +474,7 @@ export class Main extends React.Component<{}, MainState> {
                     darkMode={{state: false, onChange: this.switchChangeFactory("darkMode")}}
                     highContrastMode={{state: this.state.highContrastMode, onChange: this.highContrastChange}}
                     dailyNerdle={{state: this.state.dailyNerdle, onChange: this.setDailyNerdle}}
+                    wordleWordList={{state: this.state.wordleWordlist, onChange: this.setWordList}}
                     theme={this.state.colourTheme}
                 />
             </div>

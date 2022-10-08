@@ -94,11 +94,12 @@ export function saveSettings(settings: Settings) {
 
 export function loadSettings(): Settings {
     const settingsString: string | null = localStorage.getItem(SETTINGS_KEY);
+    const defaultSettings = {hardMode: false, darkMode: false, highContrastMode: false, dailyNerdle: false, wordleWordlist: false};
 
     if (settingsString) {
-        return JSON.parse(settingsString) as Settings;
+        return {...defaultSettings, ...JSON.parse(settingsString)};
     }
-    return {hardMode: false, darkMode: false, highContrastMode: false, dailyNerdle: false};
+    return defaultSettings;
 }
 
 export interface GuessStorage {
