@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/nerdle/static/css/main.a99af5d9.css",
-    "main.js": "/nerdle/static/js/main.74d04cd0.js",
+    "main.js": "/nerdle/static/js/main.16bdeaee.js",
     "static/js/787.781f5e4c.chunk.js": "/nerdle/static/js/787.781f5e4c.chunk.js",
     "index.html": "/nerdle/index.html",
     "main.a99af5d9.css.map": "/nerdle/static/css/main.a99af5d9.css.map",
-    "main.74d04cd0.js.map": "/nerdle/static/js/main.74d04cd0.js.map",
+    "main.16bdeaee.js.map": "/nerdle/static/js/main.16bdeaee.js.map",
     "787.781f5e4c.chunk.js.map": "/nerdle/static/js/787.781f5e4c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a99af5d9.css",
-    "static/js/main.74d04cd0.js"
+    "static/js/main.16bdeaee.js"
   ]
 }
