@@ -1,4 +1,4 @@
-
+wrong answer anim
 dark mode
 Resizable modals
 More guesses
@@ -21,3 +21,4 @@ daily nerdle
     - timer
 hard wordlist
 guess validation bug
+

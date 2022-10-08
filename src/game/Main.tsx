@@ -179,9 +179,9 @@ export class Main extends React.Component<{}, MainState> {
     calcWordListIndex = (dailyNerdle: boolean) => {
         if (dailyNerdle) {
             const daysSinceEpoch = new Date().valueOf() / this.MILLISECONDS_IN_DAY;
-            const daysSinceStart = new Date(2021, 5, 19).valueOf() / this.MILLISECONDS_IN_DAY;
-            // Wordle is actually 19 days ahead of the wordlist.
-            return Math.floor(daysSinceEpoch - daysSinceStart + 19);
+            const daysUntilStart = new Date(2021, 4, 18).valueOf() / this.MILLISECONDS_IN_DAY;
+            // The wordle offset doesn't make sense.
+            return Math.floor(daysSinceEpoch - daysUntilStart - 9);
         } else {
             return Math.floor(Math.random() * this.wordList.length);
         }
