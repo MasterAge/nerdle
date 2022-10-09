@@ -1,4 +1,6 @@
+/** @jsxImportSource @emotion/react */
 import React from "react";
+import {css} from "@emotion/react";
 import {NavBar} from "./NavBar/NavBar";
 import {LetterDisplay} from "./LetterDisplay/LetterDisplay";
 import './Main.css';
@@ -21,10 +23,22 @@ import {Popup} from "./Popup/Popup";
 import {HelpModal} from "./Modal/HelpModal";
 import {StatsModal} from "./Modal/StatsModal";
 import {SettingsModal} from "./Modal/SettingsModal";
-import {ColourTheme, defaultTheme, highContrast} from "./Style";
+import {ColourTheme, DarkTheme, defaultTheme, GameTheme, highContrast, LightTheme} from "./Style";
 
 function objectArray<Type>(numElements: number, elementFactory: () => Type): Array<Type> {
     return new Array(numElements).fill(null).map(elementFactory);
+}
+
+function gameContainerStyle(theme: GameTheme) {
+    return css`
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        background-color: ${theme.background};
+        color: ${theme.text}
+    `;
 }
 
 export interface Settings {
@@ -46,7 +60,7 @@ interface MainState extends Settings {
     darkMode: boolean;
     highContrastMode: boolean;
     finished: boolean;
-    colourTheme: ColourTheme;
+    theme: GameTheme;
 }
 
 export class Main extends React.Component<{}, MainState> {
@@ -90,6 +104,11 @@ export class Main extends React.Component<{}, MainState> {
             }
         }
 
+        let theme = new LightTheme(settings.highContrastMode);
+        if (settings.darkMode) {
+            theme = new DarkTheme(settings.highContrastMode);
+        }
+
         this.state = {
             ...settings,
             guesses: guesses,
@@ -100,7 +119,7 @@ export class Main extends React.Component<{}, MainState> {
             statsModal: false,
 
             finished: finished,
-            colourTheme: (settings.highContrastMode) ? highContrast : defaultTheme,
+            theme: theme,
         };
     }
 
@@ -427,11 +446,13 @@ export class Main extends React.Component<{}, MainState> {
     }
 
     highContrastChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({
-            highContrastMode: event.target.checked,
-            colourTheme: (event.target.checked) ? highContrast : defaultTheme
-        });
-        this.updateSettings("highContrastMode", event.target.checked)
+        const checked = event.target.checked;
+        let newTheme = new LightTheme(checked);
+        if (this.state.darkMode) {
+            newTheme = new DarkTheme(checked);
+        }
+        this.setState({highContrastMode: checked, theme: newTheme});
+        this.updateSettings("highContrastMode", checked)
     }
 
     setDailyNerdle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -462,23 +483,34 @@ export class Main extends React.Component<{}, MainState> {
         this.updateSettings("wordleWordlist", checked);
     }
 
+    setDarkMode = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const checked = event.target.checked;
+        let newTheme = new LightTheme(this.state.theme.isHighContrast);
+        if (checked) {
+            newTheme = new DarkTheme(this.state.theme.isHighContrast);
+        }
+        this.setState({darkMode: checked, theme: newTheme});
+        this.updateSettings("darkMode", checked);
+    }
+
     render() {
         return (
-            <div className="gameContainer">
+            <div css={gameContainerStyle(this.state.theme)}>
                 <NavBar
                     newGame={() => this.reset(true)}
                     help={() => this.setState({helpModal: true})}
                     stats={() => this.setState({statsModal: true})}
                     settings={() => this.setState({settingsModal: true})}
                     showNewGame={!this.state.dailyNerdle}
+                    theme={this.state.theme}
                 />
-                <LetterDisplay cells={this.state.guesses} theme={this.state.colourTheme}/>
+                <LetterDisplay cells={this.state.guesses} theme={this.state.theme}/>
                 <Keyboard
                     keystate={this.state.keyboard}
                     keyboardLayout={this.KEYBOARD_LAYOUT}
                     enterClicked={this.submit}
                     backspaceClicked={this.backspace}
-                    theme={this.state.colourTheme}
+                    theme={this.state.theme}
                 />
                 <div className="popup-container">
                     {this.state.popupList.map((message, index) =>
@@ -491,7 +523,7 @@ export class Main extends React.Component<{}, MainState> {
                     title="HOW TO PLAY"
                     show={this.state.helpModal}
                     closeModal={() => this.setState({helpModal: false})}
-                    theme={this.state.colourTheme}
+                    theme={this.state.theme}
                 />
                 <StatsModal
                     title="STATISTICS"
@@ -499,17 +531,18 @@ export class Main extends React.Component<{}, MainState> {
                     closeModal={() => this.setState({statsModal: false})}
                     stats={this.playerStats}
                     showTime={this.state.finished && this.state.dailyNerdle}
+                    theme={this.state.theme}
                 />
                 <SettingsModal
                     title="SETTINGS"
                     show={this.state.settingsModal}
                     closeModal={() => this.setState({settingsModal: false})}
                     hardMode={{state: this.state.hardMode, onChange: this.switchChangeFactory("hardMode")}}
-                    darkMode={{state: false, onChange: this.switchChangeFactory("darkMode")}}
+                    darkMode={{state: this.state.darkMode, onChange: this.setDarkMode}}
                     highContrastMode={{state: this.state.highContrastMode, onChange: this.highContrastChange}}
                     dailyNerdle={{state: this.state.dailyNerdle, onChange: this.setDailyNerdle}}
                     wordleWordList={{state: this.state.wordleWordlist, onChange: this.setWordList}}
-                    theme={this.state.colourTheme}
+                    theme={this.state.theme}
                 />
             </div>
         );

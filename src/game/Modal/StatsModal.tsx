@@ -60,7 +60,7 @@ interface StatsModalProps extends CommonModalProps {
 
 export function StatsModal(props: StatsModalProps) {
     return (
-        <CommonModal title={props.title} show={props.show} closeModal={props.closeModal}>
+        <CommonModal title={props.title} show={props.show} closeModal={props.closeModal} theme={props.theme}>
             <div className="cellRow">
                 <StatDisplay value={props.stats.played} name="Played"/>
                 <StatDisplay value={props.stats.getWinPercent()} name="Win %"/>

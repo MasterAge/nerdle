@@ -2,16 +2,16 @@
 import React, {ReactNode} from "react";
 import BackspaceOutlinedIcon from '@mui/icons-material/BackspaceOutlined';
 import {KeyState, LetterStates} from "../Models";
-import {ColourTheme, getColour} from "../Style";
+import {ColourTheme, GameTheme, getColour} from "../Style";
 import {css, keyframes} from "@emotion/react";
 import styled from "@emotion/styled";
 
-const revealFrames = (color: string) =>  keyframes`
+const revealFrames = (color: string, startingColor: string) =>  keyframes`
   0% {
-    background-color: lightgray;
+    background-color: ${startingColor};
   }
   99% {
-    background-color: lightgray;
+    background-color: ${startingColor};
   }
   100% {
     background-color: ${color};
@@ -40,20 +40,22 @@ interface KeyProps {
     onClick: () => void,
     className?: string,
     state: LetterStates,
-    theme?: ColourTheme
+    theme?: GameTheme
 }
 
 function Key(props: KeyProps) {
-    let backgroundColour: string;
+    let backgroundColour: string = "";
     let animation = undefined;
 
-    if (props.state != LetterStates.BASE && props.theme) {
-        backgroundColour = getColour(props.state, props.theme);
-        animation = css`
-          animation: ${revealFrames(backgroundColour)} 1600ms linear 0ms both;
-        `;
-    } else {
-        backgroundColour = "lightgrey";
+    if (props.theme) {
+        if (props.state != LetterStates.BASE) {
+            backgroundColour = getColour(props.state, props.theme.colourTheme);
+            animation = css`
+              animation: ${revealFrames(backgroundColour, props.theme.accents)} 1600ms linear 0ms both;
+            `;
+        } else {
+            backgroundColour = props.theme.accents;
+        }
     }
 
     const background = css`
@@ -89,7 +91,7 @@ export interface KeyboardProps {
     keyboardLayout: Array<Array<string>>;
     enterClicked: () => void;
     backspaceClicked: () => void;
-    theme: ColourTheme;
+    theme: GameTheme;
 }
 
 export function Keyboard(props: KeyboardProps) {
@@ -119,11 +121,13 @@ export function Keyboard(props: KeyboardProps) {
                 {keyCells[1]}
             </div>
             <div className="cellRow">
-                <SpecialKey onClick={props.enterClicked} state={LetterStates.BASE}>
+                <SpecialKey onClick={props.enterClicked} state={LetterStates.BASE}
+                            css={css`background-color: ${props.theme.accents}`}>
                     Enter
                 </SpecialKey>
                 {keyCells[2]}
-                <BackspaceKey onClick={props.backspaceClicked} state={LetterStates.BASE}>
+                <BackspaceKey onClick={props.backspaceClicked} state={LetterStates.BASE}
+                              css={css`background-color: ${props.theme.accents}`}>
                     <BackspaceOutlinedIcon/>
                 </BackspaceKey>
             </div>

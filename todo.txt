@@ -1,5 +1,7 @@
 wrong answer anim
 dark mode
+    - letter color contrast
+    - incorrect contrast
 
 Done:
 Help

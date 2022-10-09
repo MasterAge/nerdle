@@ -2,7 +2,7 @@
 import React from "react";
 import {css, keyframes} from "@emotion/react";
 import {LetterState, LetterStates} from "../Models";
-import {getColour, ColourTheme} from "../Style";
+import {getColour, ColourTheme, GameTheme} from "../Style";
 
 const popFrames = keyframes`
   0% {
@@ -68,7 +68,7 @@ const activeCell = css({animation: `${popFrames} 0.1s linear`})
 interface LetterCellProps {
     letter: string,
     letterState: LetterStates,
-    theme: ColourTheme
+    theme: GameTheme
 }
 
 export function LetterCell(props: LetterCellProps) {
@@ -80,13 +80,13 @@ export function LetterCell(props: LetterCellProps) {
 
     if (props.letterState == LetterStates.BASE) {
         if (props.letter.length == 0) {
-            borderColor = "lightgrey";
+            borderColor = theme.accents;
         } else {
             borderColor = "grey";
             extraClasses.push(activeCell);
         }
     } else {
-        const newColor = getColour(props.letterState, theme);
+        const newColor = getColour(props.letterState, theme.colourTheme);
         animation = revealAnimFactory(newColor);
     }
 
@@ -101,7 +101,7 @@ export function LetterCell(props: LetterCellProps) {
 
 export interface LetterDisplayProps {
     cells: Array<Array<LetterState>>;
-    theme: ColourTheme;
+    theme: GameTheme;
 }
 
 export function LetterDisplay(props: LetterDisplayProps) {

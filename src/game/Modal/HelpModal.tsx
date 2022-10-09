@@ -4,7 +4,7 @@ import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
 import "./Modals.css";
 import {LetterCell} from "../LetterDisplay/LetterDisplay";
 import {LetterStates} from "../Models";
-import {ColourTheme} from "../Style";
+import {ColourTheme, GameTheme} from "../Style";
 import {css} from "@emotion/react";
 
 const modalCellRow = css`
@@ -25,12 +25,11 @@ const modalCellRow = css`
 `;
 
 interface HelpModalProps extends CommonModalProps {
-    theme: ColourTheme;
 }
 
 export function HelpModal(props: HelpModalProps)  {
     return (
-        <CommonModal title={props.title} show={props.show} closeModal={props.closeModal}>
+        <CommonModal title={props.title} show={props.show} closeModal={props.closeModal} theme={props.theme}>
             <p>Guess the NERDLE in 6 tries.</p>
             <p>Each guess must be a valid 5-letter word. Hit the enter button to submit.</p>
             <p>After each guess, the color of the tiles will change to show how close

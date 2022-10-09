@@ -86,42 +86,40 @@ interface SettingsModalProps extends CommonModalProps {
     highContrastMode: SettingModel;
     dailyNerdle: SettingModel;
     wordleWordList: SettingModel;
-
-    theme: ColourTheme;
 }
 
 export function SettingsModal(props: SettingsModalProps) {
     return (
-        <CommonModal title={props.title} show={props.show} closeModal={props.closeModal}>
+        <CommonModal title={props.title} show={props.show} closeModal={props.closeModal} theme={props.theme}>
             <Setting
                 name="Hard Mode"
                 description="Any revealed hints must be used in subsequent guesses"
                 model={props.hardMode}
-                theme={props.theme}
+                theme={props.theme.colourTheme}
             />
             <Setting
                 name="Dark Mode"
                 description="Turn the lights off"
                 model={props.darkMode}
-                theme={props.theme}
+                theme={props.theme.colourTheme}
             />
             <Setting
                 name="High Contrast Mode"
                 description="For improved color vision"
                 model={props.highContrastMode}
-                theme={props.theme}
+                theme={props.theme.colourTheme}
             />
             <Setting
                 name="Daily Nerdle"
                 description="One word per day, same word as Wordle"
                 model={props.dailyNerdle}
-                theme={props.theme}
+                theme={props.theme.colourTheme}
             />
             <Setting
                 name="Wordle Wordlist"
                 description="Use the Wordle wordlist, otherwise use a larger wordlist"
                 model={props.wordleWordList}
-                theme={props.theme}
+                theme={props.theme.colourTheme}
             />
         </CommonModal>
     );

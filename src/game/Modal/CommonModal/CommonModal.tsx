@@ -4,6 +4,14 @@ import {Dialog, DialogContent, DialogTitle, IconButton, Slide} from "@mui/materi
 import CloseIcon from '@mui/icons-material/Close';
 import {TransitionProps} from "@mui/material/transitions";
 import {css} from "@emotion/react";
+import {GameTheme} from "../../Style";
+
+function getCommonStyle(theme: GameTheme) {
+    return css`
+        background-color: ${theme.background};
+        color: ${theme.text}
+    `
+}
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -19,6 +27,7 @@ export interface CommonModalProps {
     title: string,
     show: boolean,
     closeModal: () => void,
+    theme: GameTheme,
 }
 
 export function CommonModal(props: CommonModalProps) {
@@ -30,7 +39,7 @@ export function CommonModal(props: CommonModalProps) {
             maxWidth={"sm"}
             TransitionComponent={Transition}
         >
-            <DialogTitle css={css`text-align: center;`}>
+            <DialogTitle css={css`text-align: center; ${getCommonStyle(props.theme)}`}>
                 {props.title.toUpperCase()}
                 <IconButton
                     aria-label="close"
@@ -40,7 +49,7 @@ export function CommonModal(props: CommonModalProps) {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
-            <DialogContent>{props.children}</DialogContent>
+            <DialogContent css={getCommonStyle(props.theme)}>{props.children}</DialogContent>
         </Dialog>
     );
 }
