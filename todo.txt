@@ -1,7 +1,4 @@
 wrong answer anim
-dark mode
-    - letter color contrast
-    - incorrect contrast
 
 Done:
 Help
@@ -22,3 +19,6 @@ daily nerdle
 hard wordlist
 guess validation bug
 Resizable modals
+dark mode
+    - letter color contrast
+    - incorrect contrast

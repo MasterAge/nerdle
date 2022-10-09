@@ -17,11 +17,27 @@ export const defaultTheme: ColourTheme = {
     }
 }
 
+export const defaultDarkTheme: ColourTheme = {
+    colors: {
+        correct: '#538d4e',
+        close: '#b59f3b',
+        incorrect: '#3a3a3c',
+    }
+}
+
 export const highContrast: ColourTheme = {
     colors: {
         correct: '#f17510',
         close: '#339aef',
         incorrect: '#7e7d7d',
+    }
+}
+
+export const highContrastDark: ColourTheme = {
+    colors: {
+        correct: highContrast.colors.correct,
+        close: highContrast.colors.close,
+        incorrect: '#3a3a3c',
     }
 }
 
@@ -35,8 +51,8 @@ export class GameTheme implements Theme {
 
     constructor(isHighContrast: boolean = false, background: string, text: string, accents: string) {
         // This exists to make switching themes easier
+        this.colourTheme = defaultTheme;
         this.isHighContrast = isHighContrast;
-        this.colourTheme = (isHighContrast) ? highContrast : defaultTheme;
         this.background = background;
         this.text = text;
         this.accents = accents;
@@ -46,12 +62,14 @@ export class GameTheme implements Theme {
 export class LightTheme extends GameTheme {
     constructor(isHighContrast: boolean = false) {
         super(isHighContrast, "white", "black", "lightgrey");
+        this.colourTheme = (isHighContrast) ? highContrast : defaultTheme;
     }
 }
 
 export class DarkTheme extends GameTheme {
     constructor(isHighContrast: boolean = false) {
-        super(isHighContrast, "#121213", "white", "#5e5e5e");
+        super(isHighContrast, "#121213", "white", "#6c6c6c");
+        this.colourTheme = (isHighContrast) ? highContrastDark : defaultDarkTheme;
     }
 }
 
