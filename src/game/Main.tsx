@@ -240,6 +240,10 @@ export class Main extends React.Component<{}, MainState> {
     }
 
     submit = () => {
+        if (this.state.finished) {
+            return;
+        }
+
         const guessedWord = this.state.guesses[this.attempt]
             .map(letterState => letterState.name)
             .join("");
@@ -337,6 +341,10 @@ export class Main extends React.Component<{}, MainState> {
     }
 
     backspace = () => {
+        if (this.state.finished) {
+            return;
+        }
+
         if (this.lettersEntered > 0) {
             const guessState = this.state.guesses;
             guessState[this.attempt][this.lettersEntered - 1].name = '';
@@ -352,6 +360,9 @@ export class Main extends React.Component<{}, MainState> {
     }
 
     guess = (letter: string) => {
+        if (this.state.finished) {
+            return;
+        }
         if (this.lettersEntered < 5 && this.attempt < MAX_ATTEMPTS) {
             const guessState = this.state.guesses;
             guessState[this.attempt][this.lettersEntered].name = letter;

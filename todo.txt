@@ -1,6 +1,5 @@
 wrong answer anim
 dark mode
-More guesses
 
 Done:
 Help
