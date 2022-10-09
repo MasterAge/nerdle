@@ -1,7 +1,9 @@
+/** @jsxImportSource @emotion/react */
 import React from "react";
+import {css} from "@emotion/react";
 import {CommonModal, CommonModalProps} from "./CommonModal/CommonModal";
 import {Switch} from "@mui/material";
-import {ColourTheme} from "../Style";
+import {ColourTheme, GameTheme} from "../Style";
 import styled from "@emotion/styled";
 
 interface StyledSwitchProps {
@@ -57,7 +59,7 @@ interface SettingProps {
     name: string;
     description?: string;
     model: SettingModel
-    theme: ColourTheme;
+    theme: GameTheme;
 }
 
 export function Setting(props: SettingProps) {
@@ -72,10 +74,10 @@ export function Setting(props: SettingProps) {
                     checked={props.model.state}
                     onChange={props.model.onChange}
                     inputProps={{ 'aria-label': 'ant design' }}
-                    theme={props.theme}
+                    theme={props.theme.colourTheme}
                 />
             </div>
-            <hr/>
+            <hr css={css`border-color: ${props.theme.accents}`}/>
         </div>
     )
 }
@@ -95,31 +97,31 @@ export function SettingsModal(props: SettingsModalProps) {
                 name="Hard Mode"
                 description="Any revealed hints must be used in subsequent guesses"
                 model={props.hardMode}
-                theme={props.theme.colourTheme}
+                theme={props.theme}
             />
             <Setting
                 name="Dark Mode"
                 description="Turn the lights off"
                 model={props.darkMode}
-                theme={props.theme.colourTheme}
+                theme={props.theme}
             />
             <Setting
                 name="High Contrast Mode"
                 description="For improved color vision"
                 model={props.highContrastMode}
-                theme={props.theme.colourTheme}
+                theme={props.theme}
             />
             <Setting
                 name="Daily Nerdle"
                 description="One word per day, same word as Wordle"
                 model={props.dailyNerdle}
-                theme={props.theme.colourTheme}
+                theme={props.theme}
             />
             <Setting
                 name="Wordle Wordlist"
                 description="Use the Wordle wordlist, otherwise use a larger wordlist"
                 model={props.wordleWordList}
-                theme={props.theme.colourTheme}
+                theme={props.theme}
             />
         </CommonModal>
     );
