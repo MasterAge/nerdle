@@ -10,11 +10,18 @@ import {css} from "@emotion/react";
 const modalCellRow = css`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(1, 68px);
-  height: 68px;
-  width: 336px;
+  grid-template-rows: repeat(1, 1fr);
   grid-gap: 4px;
   font-size: 30px;
+
+
+  // Taken from LetterDisplay
+  // Ensure the width is at most 336px, otherwise reduce it according to the page height
+  width: min(336px, 40vh);
+  height: min(68px, 8vh);
+  @media (max-height: 580px) {
+    font-size: 18px;
+  }
 `;
 
 interface HelpModalProps extends CommonModalProps {

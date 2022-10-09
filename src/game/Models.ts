@@ -69,7 +69,6 @@ export class PlayerStats implements PlayerData{
     }
 }
 
-
 const PLAYER_STATS_KEY = "playerStats";
 const SETTINGS_KEY = "settings";
 const GUESSES_KEY = "guesses"
@@ -108,9 +107,7 @@ export interface GuessStorage {
 }
 
 export function saveGuesses(guesses: Array<Array<LetterState>>, wordListIndex: number) {
-    const guessStorage: GuessStorage = {
-        guesses, wordListIndex
-    }
+    const guessStorage: GuessStorage = {guesses, wordListIndex}
     localStorage.setItem(GUESSES_KEY, JSON.stringify(guessStorage))
 }
 
