@@ -148,7 +148,7 @@ export class Main extends React.Component<{}, MainState> {
         return [[], false];
     }
 
-    reset = (setState: boolean = false): Pick<MainState, "guesses" | "keyboard" | "popupList"> => {
+    reset = (setState: boolean = false, pickWord: boolean = true): Pick<MainState, "guesses" | "keyboard" | "popupList"> => {
         const guesses: Array<Array<LetterState>> = objectArray(MAX_ATTEMPTS,
             () => objectArray(5, () => new LetterState("")));
 
@@ -166,7 +166,7 @@ export class Main extends React.Component<{}, MainState> {
             this.setState(state);
         }
 
-        if (this.wordList.length > 0) {
+        if (this.wordList.length > 0 && pickWord) {
             this.pickWord(this.state.dailyNerdle);
         }
 
@@ -447,7 +447,7 @@ export class Main extends React.Component<{}, MainState> {
             }
             this.setState({dailyNerdle: enabled, finished: finished, guesses: guesses});
         } else {
-            this.reset(true);
+            this.reset(true, false);
             this.setState({dailyNerdle: enabled});
         }
         this.pickWord(enabled);
@@ -456,10 +456,10 @@ export class Main extends React.Component<{}, MainState> {
 
     setWordList = (event: React.ChangeEvent<HTMLInputElement>) => {
         const checked = event.target.checked;
-        this.setState({wordleWordlist: checked});
-        this.updateSettings("wordleWordlist", checked)
-
         this.loadWordlist(checked);
+        this.reset(true, false);
+        this.setState({wordleWordlist: checked});
+        this.updateSettings("wordleWordlist", checked);
     }
 
     render() {
