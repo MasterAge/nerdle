@@ -1,3 +1,5 @@
+Fix word lists?
+hide solution mode
 wrong answer anim
 
 Done:
@@ -22,3 +24,5 @@ Resizable modals
 dark mode
     - letter color contrast
     - incorrect contrast
+wordle word off by one should be index 500 today
+link to github repo

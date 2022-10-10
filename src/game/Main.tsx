@@ -93,16 +93,19 @@ export class Main extends React.Component<{}, MainState> {
         const settings = loadSettings();
         let {guesses, keyboard, popupList} = this.reset();
 
-        this.loadWordlist(settings.wordleWordlist);
+        this.loadWordlist(settings.wordleWordlist).then(() => {
 
-        let finished = false;
-        if (settings.dailyNerdle) {
-            const dailyNerdleData = this.loadDailyNerdle();
-            finished = dailyNerdleData[1]
-            if (dailyNerdleData[0].length > 0) {
-                guesses = dailyNerdleData[0]
+            let finished = false;
+            if (settings.dailyNerdle) {
+                const dailyNerdleData = this.loadDailyNerdle();
+                finished = dailyNerdleData[1]
+                if (dailyNerdleData[0].length > 0) {
+                    guesses = dailyNerdleData[0]
+                }
             }
-        }
+
+            this.setState({guesses: guesses, finished: finished})
+        })
 
         let theme = new LightTheme(settings.highContrastMode);
         if (settings.darkMode) {
@@ -117,37 +120,34 @@ export class Main extends React.Component<{}, MainState> {
             helpModal: false,
             settingsModal: false,
             statsModal: false,
-
-            finished: finished,
+            finished: false,
             theme: theme,
         };
+
     }
 
-    loadWordlist = (wordle_wordlist: boolean) => {
+    loadWordlist = (wordle_wordlist: boolean): Promise<void> => {
         const wordlist = (wordle_wordlist) ? "/5letter_upper_wordle.txt" : "/5letter_upper.txt";
 
-        fetch(document.location.pathname + wordlist).then(response => {
-            response.text().then(content => {
+        return fetch(document.location.pathname + wordlist)
+            .then(response => response.text())
+            .then(content => {
                 this.wordList = content.split("\n");
                 this.pickWord(this.state.dailyNerdle);
-            })
-        });
+            });
     }
 
     loadDailyNerdle = (): [Array<Array<LetterState>>, boolean] => {
-        const guesses = objectArray(MAX_ATTEMPTS,
-            () => objectArray(5, () => new LetterState("")));
+        const guesses = objectArray(MAX_ATTEMPTS, () => objectArray(5, () => new LetterState("")));
         let finished = false;
-
         const guessData = loadGuesses();
 
-        // this.calcWordListIndex should return the next index if we have advanced a day since the last save.
+        // calcWordListIndex should return the next index if we have advanced a day since the last save.
         if (guessData && guessData[1] == this.calcWordListIndex(true)) {
             const storedGuesses = guessData[0];
 
             storedGuesses.forEach((guess, i) => guess.forEach((state, j) => {
-                guesses[i][j].name = state.name;
-                guesses[i][j].state = state.state;
+                guesses[i][j] = new LetterState(state.name, state.state);
             }));
 
             // Count how many guesses have been populated.
@@ -199,8 +199,8 @@ export class Main extends React.Component<{}, MainState> {
         if (dailyNerdle) {
             const daysSinceEpoch = new Date().valueOf() / this.MILLISECONDS_IN_DAY;
             const daysUntilStart = new Date(2021, 4, 18).valueOf() / this.MILLISECONDS_IN_DAY;
-            // The wordle offset doesn't make sense.
-            return Math.floor(daysSinceEpoch - daysUntilStart - 9);
+            // Offset enough to be different from wordle when using the wordle wordlist.
+            return Math.floor(daysSinceEpoch - daysUntilStart + 1000) % this.wordList.length;
         } else {
             return Math.floor(Math.random() * this.wordList.length);
         }

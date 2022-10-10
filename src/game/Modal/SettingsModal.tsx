@@ -113,7 +113,7 @@ export function SettingsModal(props: SettingsModalProps) {
             />
             <Setting
                 name="Daily Nerdle"
-                description="One word per day, same word as Wordle"
+                description="Solve one puzzle per day, resets at midnight"
                 model={props.dailyNerdle}
                 theme={props.theme}
             />
@@ -123,6 +123,17 @@ export function SettingsModal(props: SettingsModalProps) {
                 model={props.wordleWordList}
                 theme={props.theme}
             />
+            <a
+                href="https://github.com/MasterAge/nerdle"
+                target="_blank"
+                css={css`
+                    font-size: 14px;
+                    color: gray;
+                    text-align:center;
+                `}
+            >
+                GitHub Repo
+            </a>
         </CommonModal>
     );
 }
